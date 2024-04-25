@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace DecodeLabs\Prophet;
 
 use DecodeLabs\Coercion;
+use DecodeLabs\Dictum;
+use DecodeLabs\Exceptional;
 use DecodeLabs\Prophet;
 use DecodeLabs\Prophet\Model\Assistant;
 use DecodeLabs\Prophet\Model\Repository;
@@ -34,6 +36,15 @@ class Context
         ?Slingshot $slingshot = null
     ) {
         $this->slingshot = $slingshot ?? new Slingshot();
+    }
+
+    /**
+     * Load platform
+     */
+    public function loadPlatform(
+        string $name
+    ): Platform {
+        return $this->slingshot->resolveNamedInstance(Platform::class, $name);
     }
 
     /**
@@ -139,6 +150,7 @@ class Context
         string|Blueprint $blueprint
     ): Blueprint {
         if (is_string($blueprint)) {
+            $blueprint = Dictum::id($blueprint);
             $blueprint = $this->slingshot->resolveNamedInstance(Blueprint::class, $blueprint);
         }
 
@@ -179,14 +191,30 @@ class Context
         return $platform->fetchMessages($thread, $afterId, $limit);
     }
 
-
     /**
-     * Load platform
+     * Send reply to thread
+     *
+     * @param T $thread
+     * @return array<string, mixed>
      */
-    public function loadPlatform(
-        string $name
-    ): Platform {
-        return $this->slingshot->resolveNamedInstance(Platform::class, $name);
+    public function reply(
+        Thread $thread,
+        string $message
+    ): array {
+        if ($thread->getServiceId() === null) {
+            throw Exceptional::Runtime(
+                'Cannot reply to thread that has not completed initialization'
+            );
+        }
+
+        $assistant = $this->loadAssistant($thread->getAction(), $thread->getServiceName());
+        $platform = $this->loadPlatform($thread->getServiceName());
+        $output = $platform->reply($assistant, $thread, $message);
+
+        $repository = $this->getRepository();
+        $repository->storeThread($thread);
+
+        return $output;
     }
 }
 

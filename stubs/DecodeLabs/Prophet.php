@@ -8,12 +8,12 @@ namespace DecodeLabs;
 use DecodeLabs\Veneer\Proxy as Proxy;
 use DecodeLabs\Veneer\ProxyTrait as ProxyTrait;
 use DecodeLabs\Prophet\Context as Inst;
-use DecodeLabs\Prophet\Model\Repository as Ref0;
-use DecodeLabs\Prophet\Blueprint as Ref1;
-use DecodeLabs\Prophet\Model\Assistant as Ref2;
-use DecodeLabs\Prophet\Subject as Ref3;
-use DecodeLabs\Prophet\Model\Thread as Ref4;
-use DecodeLabs\Prophet\Platform as Ref5;
+use DecodeLabs\Prophet\Platform as Ref0;
+use DecodeLabs\Prophet\Model\Repository as Ref1;
+use DecodeLabs\Prophet\Blueprint as Ref2;
+use DecodeLabs\Prophet\Model\Assistant as Ref3;
+use DecodeLabs\Prophet\Subject as Ref4;
+use DecodeLabs\Prophet\Model\Thread as Ref5;
 
 class Prophet implements Proxy
 {
@@ -24,22 +24,25 @@ class Prophet implements Proxy
 
     public static Inst $instance;
 
-    public static function getRepository(): Ref0 {
+    public static function loadPlatform(string $name): Ref0 {
+        return static::$instance->loadPlatform(...func_get_args());
+    }
+    public static function getRepository(): Ref1 {
         return static::$instance->getRepository();
     }
-    public static function loadAssistant(Ref1|string $blueprint, string $serviceName): Ref2 {
+    public static function loadAssistant(Ref2|string $blueprint, string $serviceName): Ref3 {
         return static::$instance->loadAssistant(...func_get_args());
     }
-    public static function loadThread(Ref1|string $blueprint, Ref3 $subject): Ref4 {
+    public static function loadThread(Ref2|string $blueprint, Ref4 $subject): Ref5 {
         return static::$instance->loadThread(...func_get_args());
     }
-    public static function serializeThreadWithMessages(Ref4 $thread, ?string $afterId = NULL, int $limit = 20): array {
+    public static function serializeThreadWithMessages(Ref5 $thread, ?string $afterId = NULL, int $limit = 20): array {
         return static::$instance->serializeThreadWithMessages(...func_get_args());
     }
-    public static function fetchMessages(Ref4 $thread, ?string $afterId = NULL, int $limit = 20): array {
+    public static function fetchMessages(Ref5 $thread, ?string $afterId = NULL, int $limit = 20): array {
         return static::$instance->fetchMessages(...func_get_args());
     }
-    public static function loadPlatform(string $name): Ref5 {
-        return static::$instance->loadPlatform(...func_get_args());
+    public static function reply(Ref5 $thread, string $message): array {
+        return static::$instance->reply(...func_get_args());
     }
 };

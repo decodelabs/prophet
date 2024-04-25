@@ -78,4 +78,15 @@ interface Platform
         ?string $afterId = null,
         int $limit = 20
     ): array;
+
+    /**
+     * Send reply
+     *
+     * @return array<string, mixed>
+     */
+    public function reply(
+        Assistant $assistant,
+        Thread $thread,
+        string $message
+    ): array;
 }
