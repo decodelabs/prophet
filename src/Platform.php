@@ -38,6 +38,17 @@ interface Platform
     ): string;
 
     /**
+     * @param array<Feature> $features
+     */
+    public function shouldUpdateModel(
+        string $oldModel,
+        string $newModel,
+        Medium $medium,
+        LanguageModelLevel $level = LanguageModelLevel::Standard,
+        array $features = []
+    ): bool;
+
+    /**
      * Find assistant by action
      */
     public function findAssistant(
@@ -50,6 +61,20 @@ interface Platform
     public function createAssistant(
         Assistant $assistant
     ): void;
+
+    /**
+     * Update assistant model if needed
+     */
+    public function updateAssistant(
+        Assistant $assistant
+    ): bool;
+
+    /**
+     * Delete assistant object if supported
+     */
+    public function deleteAssistant(
+        Assistant $assistant
+    ): bool;
 
     /**
      * Start thread
@@ -66,6 +91,13 @@ interface Platform
     public function refreshThread(
         Thread $thread
     ): void;
+
+    /**
+     * Delete thread
+     */
+    public function deleteThread(
+        Thread $thread
+    ): bool;
 
 
     /**

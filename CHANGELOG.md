@@ -1,3 +1,7 @@
+* Added Thread reset functionality
+* Added Assistant update support
+* Added delete handlers to Repository interface
+
 ## v0.1.1 (2024-04-29)
 * Fixed Veneer stubs in gitattributes
 

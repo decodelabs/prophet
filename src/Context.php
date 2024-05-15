@@ -62,6 +62,22 @@ class Context
     }
 
     /**
+     * Load assistant if exists
+     *
+     * @param string|Blueprint<S> $blueprint
+     */
+    public function tryLoadAssistant(
+        string|Blueprint $blueprint,
+        string $serviceName,
+    ): ?Assistant {
+        return $this->loadOrCreateAssistant(
+            blueprint: $blueprint,
+            serviceName: $serviceName,
+            create: false
+        );
+    }
+
+    /**
      * Load assistant
      *
      * @param string|Blueprint<S> $blueprint
@@ -70,6 +86,43 @@ class Context
         string|Blueprint $blueprint,
         string $serviceName
     ): Assistant {
+        return $this->loadOrCreateAssistant(
+            blueprint: $blueprint,
+            serviceName: $serviceName,
+            create: true
+        );
+    }
+
+    /**
+     * Load assistant for new thread
+     *
+     * @param string|Blueprint<S> $blueprint
+     */
+    public function loadFreshAssistant(
+        string|Blueprint $blueprint,
+        string $serviceName
+    ): Assistant {
+        return $this->loadOrCreateAssistant(
+            blueprint: $blueprint,
+            serviceName: $serviceName,
+            create: true,
+            fresh: true
+        );
+    }
+
+
+    /**
+     * Load assistant
+     *
+     * @param string|Blueprint<S> $blueprint
+     * @phpstan-return ($create is true ? A : A|null)
+     */
+    protected function loadOrCreateAssistant(
+        string|Blueprint $blueprint,
+        string $serviceName,
+        bool $create,
+        bool $fresh = false
+    ): ?Assistant {
         $repository = $this->getRepository();
         $blueprint = $this->normalizeBlueprint($blueprint);
         $assistant = $repository->fetchAssistant($blueprint, $serviceName);
@@ -77,14 +130,21 @@ class Context
         $store = false;
 
         if (!$assistant) {
+            if (!$create) {
+                return null;
+            }
+
             $assistant = $repository->createAssistant($blueprint, $serviceName);
             $platform->findAssistant($assistant);
             $store = true;
+            $fresh = false;
         }
 
-        if ($assistant->getLanguageModelName() === null) {
+        $existingModel = $assistant->getLanguageModelName();
+
+        if ($existingModel === null) {
             $assistant->setLanguageModelName(
-                $platform->suggestModel(
+                $existingModel = $platform->suggestModel(
                     $blueprint->getMedium(),
                     $blueprint->getLanguageModelLevel(),
                     $blueprint->getFeatures()
@@ -96,6 +156,26 @@ class Context
         if ($assistant->getServiceId() === null) {
             $platform->createAssistant($assistant);
             $store = true;
+        } elseif (
+            $fresh &&
+            $existingModel !== ($model = $platform->suggestModel(
+                $blueprint->getMedium(),
+                $blueprint->getLanguageModelLevel(),
+                $blueprint->getFeatures()
+            )) &&
+            $platform->shouldUpdateModel(
+                $existingModel,
+                $model,
+                $blueprint->getMedium(),
+                $blueprint->getLanguageModelLevel(),
+                $blueprint->getFeatures()
+            )
+        ) {
+            $assistant->setLanguageModelName($model);
+
+            if ($platform->updateAssistant($assistant)) {
+                $store = true;
+            }
         }
 
         if ($store) {
@@ -103,6 +183,45 @@ class Context
         }
 
         return $assistant;
+    }
+
+    /**
+     * Delete assistant
+     *
+     * @param string|Blueprint<S> $blueprint
+     */
+    public function deleteAssistant(
+        string|Blueprint $blueprint,
+        string $serviceName
+    ): bool {
+        $assistant = $this->loadOrCreateAssistant($blueprint, $serviceName, false);
+
+        if (!$assistant) {
+            return false;
+        }
+
+        if ($assistant->getServiceId() !== null) {
+            $platform = $this->loadPlatform($assistant->getServiceName());
+            $platform->deleteAssistant($assistant);
+        }
+
+        $repository = $this->getRepository();
+        return $repository->deleteAssistant($assistant);
+    }
+
+
+
+    /**
+     * Load a thread
+     *
+     * @param string|Blueprint<S> $blueprint
+     * @param S $subject
+     */
+    public function tryLoadThread(
+        string|Blueprint $blueprint,
+        Subject $subject
+    ): ?Thread {
+        return $this->loadOrCreateThread($blueprint, $subject, false);
     }
 
 
@@ -116,19 +235,42 @@ class Context
         string|Blueprint $blueprint,
         Subject $subject
     ): Thread {
+        return $this->loadOrCreateThread($blueprint, $subject, true);
+    }
+
+    /**
+     * Load a thread
+     *
+     * @param string|Blueprint<S> $blueprint
+     * @param S $subject
+     * @phpstan-return ($create is true ? T : T|null)
+     */
+    protected function loadOrCreateThread(
+        string|Blueprint $blueprint,
+        Subject $subject,
+        bool $create
+    ): ?Thread {
         $repository = $this->getRepository();
         $blueprint = $this->normalizeBlueprint($blueprint);
+        $store = false;
 
         if (!$thread = $repository->fetchThread($blueprint, $subject)) {
+            if (!$create) {
+                return null;
+            }
+
             $thread = $repository->createThread($blueprint, $subject);
+            $store = true;
         }
 
-        $assistant = $this->loadAssistant($blueprint, $thread->getServiceName());
+        $assistant = $this->loadFreshAssistant($blueprint, $thread->getServiceName());
         $platform = $this->loadPlatform($thread->getServiceName());
+
 
         if ($thread->getServiceId() !== null) {
             if (!$thread->isReady()) {
                 $platform->refreshThread($thread);
+                $store = true;
             }
         } else {
             $platform->startThread(
@@ -136,10 +278,39 @@ class Context
                 $thread,
                 $blueprint->generateAdditionalInstructions($subject)
             );
+            $store = true;
         }
 
-        $repository->storeThread($thread);
+        if ($store) {
+            $repository->storeThread($thread);
+        }
+
         return $thread;
+    }
+
+    /**
+     * delete a thread
+     *
+     * @param string|Blueprint<S> $blueprint
+     * @param S $subject
+     */
+    public function deleteThread(
+        string|Blueprint $blueprint,
+        Subject $subject
+    ): bool {
+        $thread = $this->loadOrCreateThread($blueprint, $subject, false);
+
+        if (!$thread) {
+            return false;
+        }
+
+        if ($thread->getServiceId() !== null) {
+            $platform = $this->loadPlatform($thread->getServiceName());
+            $platform->deleteThread($thread);
+        }
+
+        $repository = $this->getRepository();
+        return $repository->deleteThread($thread);
     }
 
     /**

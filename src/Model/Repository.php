@@ -44,6 +44,13 @@ interface Repository
     ): void;
 
     /**
+     * @param A $assistant
+     */
+    public function deleteAssistant(
+        Assistant $assistant
+    ): bool;
+
+    /**
      * @param Blueprint<Subject> $blueprint
      * @return T|null
      */
@@ -67,4 +74,11 @@ interface Repository
     public function storeThread(
         Thread $thread
     ): void;
+
+    /**
+     * @param T $thread
+     */
+    public function deleteThread(
+        Thread $thread
+    ): bool;
 }
