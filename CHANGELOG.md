@@ -1,3 +1,6 @@
+## v0.2.1 (2024-05-20)
+* Added model traits
+
 ## v0.2.0 (2024-05-15)
 * Added Thread reset functionality
 * Added Assistant update support
