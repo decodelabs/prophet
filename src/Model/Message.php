@@ -73,11 +73,17 @@ class Message implements JsonSerializable
      */
     public function jsonSerialize(): array
     {
+        $content = [];
+
+        foreach ($this->content as $item) {
+            $content[] = $item->jsonSerialize();
+        }
+
         return [
-            'id' => $this->getId(),
-            'createdAt' => $this->getCreatedAt(),
-            'role' => $this->getRole(),
-            'content' => $this->getAllContent()
+            'id' => $this->id,
+            'createdAt' => $this->createdAt,
+            'role' => $this->role->value,
+            'content' => $content
         ];
     }
 }
