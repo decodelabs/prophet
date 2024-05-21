@@ -1,3 +1,5 @@
+* Improved default isReady() implementation
+
 ## v0.2.1 (2024-05-20)
 * Added model traits
 
