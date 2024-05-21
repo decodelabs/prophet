@@ -1,3 +1,6 @@
+* Fixed Message jsonSerialize
+* Fixed composer dev version
+
 ## v0.3.1 (2024-05-21)
 * Fixed File Content type
 

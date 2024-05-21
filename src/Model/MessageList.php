@@ -64,10 +64,16 @@ class MessageList implements JsonSerializable
      */
     public function jsonSerialize(): array
     {
+        $messages = [];
+
+        foreach ($this->messages as $message) {
+            $messages[] = $message->jsonSerialize();
+        }
+
         return [
             'hasMore' => $this->hasMore,
             'last' => $this->last,
-            'messages' => $this->messages
+            'messages' => $messages
         ];
     }
 }
