@@ -12,7 +12,7 @@ namespace DecodeLabs\Prophet\Model\Content;
 use DecodeLabs\Prophet\Model\Content;
 use DecodeLabs\Prophet\Service\Medium;
 
-class Image implements Content
+class File implements Content
 {
     protected Medium $medium;
     protected string $fileId;
