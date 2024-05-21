@@ -10,8 +10,9 @@ declare(strict_types=1);
 namespace DecodeLabs\Prophet\Model;
 
 use Carbon\Carbon;
+use JsonSerializable;
 
-interface Suggestion
+interface Suggestion extends JsonSerializable
 {
     public function getId(): ?string;
     public function getAction(): string;

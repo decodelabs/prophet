@@ -7,14 +7,16 @@
 
 declare(strict_types=1);
 
-namespace DecodeLabs\Prophet\Model;
+namespace DecodeLabs\Prophet;
 
-use DecodeLabs\Prophet\Blueprint;
-use DecodeLabs\Prophet\Subject;
+use DecodeLabs\Prophet\Model\Assistant;
+use DecodeLabs\Prophet\Model\Suggestion;
+use DecodeLabs\Prophet\Model\Thread;
 
 /**
  * @template A of Assistant
  * @template T of Thread
+ * @template S of Suggestion
  */
 interface Repository
 {
@@ -80,5 +82,37 @@ interface Repository
      */
     public function deleteThread(
         Thread $thread
+    ): bool;
+
+    /**
+     * @param T $thread
+     * @return array<S>
+     */
+    public function fetchSuggestions(
+        Thread $thread
+    ): array;
+
+    /**
+     * @param T $thread
+     * @param array<string> $options
+     * @return S
+     */
+    public function createSuggestion(
+        Thread $thread,
+        array $options
+    ): Suggestion;
+
+    /**
+     * @param S $suggestion
+     */
+    public function storeSuggestion(
+        Suggestion $suggestion
+    ): void;
+
+    /**
+     * @param S $suggestion
+     */
+    public function deleteSuggestion(
+        Suggestion $suggestion
     ): bool;
 }

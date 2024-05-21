@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace DecodeLabs\Prophet;
 
 use DecodeLabs\Prophet\Model\Assistant;
+use DecodeLabs\Prophet\Model\Message;
+use DecodeLabs\Prophet\Model\MessageList;
 use DecodeLabs\Prophet\Model\Thread;
 use DecodeLabs\Prophet\Service\Feature;
 use DecodeLabs\Prophet\Service\LanguageModelLevel;
@@ -102,23 +104,19 @@ interface Platform
 
     /**
      * Fetch messages
-     *
-     * @return array<string, mixed>
      */
     public function fetchMessages(
         Thread $thread,
-        ?string $afterId = null,
-        int $limit = 20
-    ): array;
+        int $limit = 20,
+        string|int|null $after = null
+    ): MessageList;
 
     /**
      * Send reply
-     *
-     * @return array<string, mixed>
      */
     public function reply(
         Assistant $assistant,
         Thread $thread,
         string $message
-    ): array;
+    ): Message;
 }

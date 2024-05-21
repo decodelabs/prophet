@@ -9,12 +9,13 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Prophet\Service;
 
-enum Medium
+enum Medium: string
 {
-    case Text;
-    case Code;
-    case Image;
-    case Speech;
-    case Video;
-    case Audio;
+    case Text = 'text';
+    case Code = 'code';
+    case Json = 'json';
+    case Image = 'image';
+    case Speech = 'speech';
+    case Video = 'video';
+    case Audio = 'audio';
 }

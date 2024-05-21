@@ -14,7 +14,9 @@ use DecodeLabs\Dictum;
 use DecodeLabs\Exceptional;
 use DecodeLabs\Prophet;
 use DecodeLabs\Prophet\Model\Assistant;
-use DecodeLabs\Prophet\Model\Repository;
+use DecodeLabs\Prophet\Model\Message;
+use DecodeLabs\Prophet\Model\MessageList;
+use DecodeLabs\Prophet\Model\Suggestion;
 use DecodeLabs\Prophet\Model\Thread;
 use DecodeLabs\Slingshot;
 use DecodeLabs\Veneer;
@@ -22,12 +24,13 @@ use DecodeLabs\Veneer;
 /**
  * @template A of Assistant
  * @template T of Thread
- * @template S of Subject
+ * @template S of Suggestion
+ * @template J of Subject
  */
 class Context
 {
     /**
-     * @var Repository<A, T>|null
+     * @var Repository<A,T,S>|null
      */
     protected ?Repository $repository = null;
     protected Slingshot $slingshot;
@@ -50,7 +53,7 @@ class Context
     /**
      * Get the repository instance
      *
-     * @return Repository<A, T>
+     * @return Repository<A,T,S>
      */
     public function getRepository(): Repository
     {
@@ -64,7 +67,7 @@ class Context
     /**
      * Load assistant if exists
      *
-     * @param string|Blueprint<S> $blueprint
+     * @param string|Blueprint<J> $blueprint
      */
     public function tryLoadAssistant(
         string|Blueprint $blueprint,
@@ -80,7 +83,7 @@ class Context
     /**
      * Load assistant
      *
-     * @param string|Blueprint<S> $blueprint
+     * @param string|Blueprint<J> $blueprint
      */
     public function loadAssistant(
         string|Blueprint $blueprint,
@@ -96,7 +99,7 @@ class Context
     /**
      * Load assistant for new thread
      *
-     * @param string|Blueprint<S> $blueprint
+     * @param string|Blueprint<J> $blueprint
      */
     public function loadFreshAssistant(
         string|Blueprint $blueprint,
@@ -114,7 +117,7 @@ class Context
     /**
      * Load assistant
      *
-     * @param string|Blueprint<S> $blueprint
+     * @param string|Blueprint<J> $blueprint
      * @phpstan-return ($create is true ? A : A|null)
      */
     protected function loadOrCreateAssistant(
@@ -188,7 +191,7 @@ class Context
     /**
      * Delete assistant
      *
-     * @param string|Blueprint<S> $blueprint
+     * @param string|Blueprint<J> $blueprint
      */
     public function deleteAssistant(
         string|Blueprint $blueprint,
@@ -214,8 +217,8 @@ class Context
     /**
      * Load a thread
      *
-     * @param string|Blueprint<S> $blueprint
-     * @param S $subject
+     * @param string|Blueprint<J> $blueprint
+     * @param J $subject
      */
     public function tryLoadThread(
         string|Blueprint $blueprint,
@@ -228,8 +231,8 @@ class Context
     /**
      * Load a thread
      *
-     * @param string|Blueprint<S> $blueprint
-     * @param S $subject
+     * @param string|Blueprint<J> $blueprint
+     * @param J $subject
      */
     public function loadThread(
         string|Blueprint $blueprint,
@@ -241,8 +244,8 @@ class Context
     /**
      * Load a thread
      *
-     * @param string|Blueprint<S> $blueprint
-     * @param S $subject
+     * @param string|Blueprint<J> $blueprint
+     * @param J $subject
      * @phpstan-return ($create is true ? T : T|null)
      */
     protected function loadOrCreateThread(
@@ -291,8 +294,8 @@ class Context
     /**
      * delete a thread
      *
-     * @param string|Blueprint<S> $blueprint
-     * @param S $subject
+     * @param string|Blueprint<J> $blueprint
+     * @param J $subject
      */
     public function deleteThread(
         string|Blueprint $blueprint,
@@ -314,8 +317,8 @@ class Context
     }
 
     /**
-     * @param string|Blueprint<S> $blueprint
-     * @return Blueprint<S>
+     * @param string|Blueprint<J> $blueprint
+     * @return Blueprint<J>
      */
     protected function normalizeBlueprint(
         string|Blueprint $blueprint
@@ -340,38 +343,35 @@ class Context
     ): array {
         return array_merge(
             Coercion::toArray($thread->jsonSerialize()),
-            $this->fetchMessages($thread, $afterId, $limit)
+            $this->fetchMessages($thread, $afterId, $limit)->jsonSerialize()
         );
     }
 
     /**
      * Fetch messages
-     *
-     * @return array<string, mixed>
      */
     public function fetchMessages(
         Thread $thread,
         ?string $afterId = null,
         int $limit = 20
-    ): array {
+    ): MessageList {
         if ($thread->getServiceId() === null) {
-            return [];
+            return new MessageList();
         }
 
         $platform = $this->loadPlatform($thread->getServiceName());
-        return $platform->fetchMessages($thread, $afterId, $limit);
+        return $platform->fetchMessages($thread, $limit, $afterId);
     }
 
     /**
      * Send reply to thread
      *
      * @param T $thread
-     * @return array<string, mixed>
      */
     public function reply(
         Thread $thread,
         string $message
-    ): array {
+    ): Message {
         if ($thread->getServiceId() === null) {
             throw Exceptional::Runtime(
                 'Cannot reply to thread that has not completed initialization'
