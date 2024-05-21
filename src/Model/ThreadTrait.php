@@ -16,7 +16,14 @@ trait ThreadTrait
      */
     public function isReady(): bool
     {
-        return $this->getCompletedAt() !== null;
+        return
+            $this->getCompletedAt() !== null &&
+            match ($this->getStatus()) {
+                RunStatus::Queued,
+                RunStatus::InProgress,
+                RunStatus::RequiresAction => false,
+                default => true
+            };
     }
 
     /**

@@ -9,11 +9,13 @@ use DecodeLabs\Veneer\Proxy as Proxy;
 use DecodeLabs\Veneer\ProxyTrait as ProxyTrait;
 use DecodeLabs\Prophet\Context as Inst;
 use DecodeLabs\Prophet\Platform as Ref0;
-use DecodeLabs\Prophet\Model\Repository as Ref1;
+use DecodeLabs\Prophet\Repository as Ref1;
 use DecodeLabs\Prophet\Blueprint as Ref2;
 use DecodeLabs\Prophet\Model\Assistant as Ref3;
 use DecodeLabs\Prophet\Subject as Ref4;
 use DecodeLabs\Prophet\Model\Thread as Ref5;
+use DecodeLabs\Prophet\Model\MessageList as Ref6;
+use DecodeLabs\Prophet\Model\Message as Ref7;
 
 class Prophet implements Proxy
 {
@@ -54,10 +56,10 @@ class Prophet implements Proxy
     public static function serializeThreadWithMessages(Ref5 $thread, ?string $afterId = NULL, int $limit = 20): array {
         return static::$instance->serializeThreadWithMessages(...func_get_args());
     }
-    public static function fetchMessages(Ref5 $thread, ?string $afterId = NULL, int $limit = 20): array {
+    public static function fetchMessages(Ref5 $thread, ?string $afterId = NULL, int $limit = 20): Ref6 {
         return static::$instance->fetchMessages(...func_get_args());
     }
-    public static function reply(Ref5 $thread, string $message): array {
+    public static function reply(Ref5 $thread, string $message): Ref7 {
         return static::$instance->reply(...func_get_args());
     }
 };

@@ -1,3 +1,10 @@
+## v0.3.0 (2024-05-21)
+* Added Message model structures
+* Added Suggestions to Repository
+* Moved Repository interface to root
+* Added JsonSerializable to Suggestion interface
+* Improved default isReady() implementation
+
 ## v0.2.1 (2024-05-20)
 * Added model traits
 
