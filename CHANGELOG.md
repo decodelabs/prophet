@@ -1,3 +1,4 @@
+## v0.3.0 (2024-05-21)
 * Added Message model structures
 * Added Suggestions to Repository
 * Moved Repository interface to root
