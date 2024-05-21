@@ -18,7 +18,7 @@ trait ThreadTrait
     {
         return
             $this->getCompletedAt() !== null &&
-            match($this->getStatus()) {
+            match ($this->getStatus()) {
                 RunStatus::Queued,
                 RunStatus::InProgress,
                 RunStatus::RequiresAction => false,
