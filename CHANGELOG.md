@@ -1,3 +1,8 @@
+## v0.4.0 (2024-05-22)
+* Improved delete methods on Context
+* Fixed limit parameter placement in Context
+* Added text content combiner
+
 ## v0.3.2 (2024-05-21)
 * Fixed Message jsonSerialize
 * Fixed composer dev version
