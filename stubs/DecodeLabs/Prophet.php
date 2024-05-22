@@ -54,6 +54,7 @@ class Prophet implements Proxy
     public static function loadThread(Ref2|string $blueprint, Ref4 $subject): Ref5 {
         return static::$instance->loadThread(...func_get_args());
     }
+    public static function refreshThread(Ref5 $thread): void {}
     public static function loadAndDeleteThread(Ref2|string $blueprint, Ref4 $subject): bool {
         return static::$instance->loadAndDeleteThread(...func_get_args());
     }
