@@ -41,7 +41,11 @@ class Prophet implements Proxy
     public static function loadFreshAssistant(Ref2|string $blueprint, string $serviceName): Ref3 {
         return static::$instance->loadFreshAssistant(...func_get_args());
     }
-    public static function deleteAssistant(Ref2|string $blueprint, string $serviceName): bool {
+    public static function updateAssistant(Ref3 $assistant): void {}
+    public static function loadAndDeleteAssistant(Ref2|string $blueprint, string $serviceName): bool {
+        return static::$instance->loadAndDeleteAssistant(...func_get_args());
+    }
+    public static function deleteAssistant(Ref3 $assistant): bool {
         return static::$instance->deleteAssistant(...func_get_args());
     }
     public static function tryLoadThread(Ref2|string $blueprint, Ref4 $subject): ?Ref5 {
@@ -50,13 +54,16 @@ class Prophet implements Proxy
     public static function loadThread(Ref2|string $blueprint, Ref4 $subject): Ref5 {
         return static::$instance->loadThread(...func_get_args());
     }
-    public static function deleteThread(Ref2|string $blueprint, Ref4 $subject): bool {
+    public static function loadAndDeleteThread(Ref2|string $blueprint, Ref4 $subject): bool {
+        return static::$instance->loadAndDeleteThread(...func_get_args());
+    }
+    public static function deleteThread(Ref5 $thread): bool {
         return static::$instance->deleteThread(...func_get_args());
     }
-    public static function serializeThreadWithMessages(Ref5 $thread, ?string $afterId = NULL, int $limit = 20): array {
+    public static function serializeThreadWithMessages(Ref5 $thread, int $limit = 20, ?string $afterId = NULL): array {
         return static::$instance->serializeThreadWithMessages(...func_get_args());
     }
-    public static function fetchMessages(Ref5 $thread, ?string $afterId = NULL, int $limit = 20): Ref6 {
+    public static function fetchMessages(Ref5 $thread, int $limit = 20, ?string $afterId = NULL): Ref6 {
         return static::$instance->fetchMessages(...func_get_args());
     }
     public static function reply(Ref5 $thread, string $message): Ref7 {

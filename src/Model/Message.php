@@ -68,6 +68,23 @@ class Message implements JsonSerializable
         return $this->content[$index] ?? null;
     }
 
+    public function getTextContent(): ?string
+    {
+        $output = null;
+
+        foreach ($this->content as $content) {
+            if ($content instanceof Content\Text) {
+                if ($output === null) {
+                    $output = '';
+                }
+
+                $output .= "\n" . $content->getContent();
+            }
+        }
+
+        return $output;
+    }
+
     /**
      * @return array<string, mixed>
      */

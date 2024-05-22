@@ -189,20 +189,54 @@ class Context
     }
 
     /**
+     * Update assistant
+     *
+     * @param A $assistant
+     */
+    public function updateAssistant(
+        Assistant $assistant
+    ): void {
+        $platform = $this->loadPlatform($assistant->getServiceName());
+
+        if (!$platform->updateAssistant($assistant)) {
+            throw Exceptional::Runtime(
+                'Failed to update assistant'
+            );
+        }
+
+        $this->getRepository()->storeAssistant($assistant);
+    }
+
+    /**
      * Delete assistant
      *
      * @param string|Blueprint<J> $blueprint
      */
-    public function deleteAssistant(
+    public function loadAndDeleteAssistant(
         string|Blueprint $blueprint,
         string $serviceName
     ): bool {
-        $assistant = $this->loadOrCreateAssistant($blueprint, $serviceName, false);
+        $assistant = $this->loadOrCreateAssistant(
+            blueprint: $blueprint,
+            serviceName: $serviceName,
+            create: false
+        );
 
         if (!$assistant) {
             return false;
         }
 
+        return $this->deleteAssistant($assistant);
+    }
+
+    /**
+     * Delete assistant
+     *
+     * @param A $assistant
+     */
+    public function deleteAssistant(
+        Assistant $assistant
+    ): bool {
         if ($assistant->getServiceId() !== null) {
             $platform = $this->loadPlatform($assistant->getServiceName());
             $platform->deleteAssistant($assistant);
@@ -224,7 +258,11 @@ class Context
         string|Blueprint $blueprint,
         Subject $subject
     ): ?Thread {
-        return $this->loadOrCreateThread($blueprint, $subject, false);
+        return $this->loadOrCreateThread(
+            blueprint: $blueprint,
+            subject: $subject,
+            create: false
+        );
     }
 
 
@@ -238,7 +276,11 @@ class Context
         string|Blueprint $blueprint,
         Subject $subject
     ): Thread {
-        return $this->loadOrCreateThread($blueprint, $subject, true);
+        return $this->loadOrCreateThread(
+            blueprint: $blueprint,
+            subject: $subject,
+            create: true
+        );
     }
 
     /**
@@ -297,16 +339,31 @@ class Context
      * @param string|Blueprint<J> $blueprint
      * @param J $subject
      */
-    public function deleteThread(
+    public function loadAndDeleteThread(
         string|Blueprint $blueprint,
         Subject $subject
     ): bool {
-        $thread = $this->loadOrCreateThread($blueprint, $subject, false);
+        $thread = $this->loadOrCreateThread(
+            blueprint: $blueprint,
+            subject: $subject,
+            create: false
+        );
 
         if (!$thread) {
             return false;
         }
 
+        return $this->deleteThread($thread);
+    }
+
+    /**
+     * Delete a thread
+     *
+     * @param T $thread
+     */
+    public function deleteThread(
+        Thread $thread
+    ): bool {
         if ($thread->getServiceId() !== null) {
             $platform = $this->loadPlatform($thread->getServiceName());
             $platform->deleteThread($thread);
@@ -338,12 +395,12 @@ class Context
      */
     public function serializeThreadWithMessages(
         Thread $thread,
-        ?string $afterId = null,
-        int $limit = 20
+        int $limit = 20,
+        ?string $afterId = null
     ): array {
         return array_merge(
             Coercion::toArray($thread->jsonSerialize()),
-            $this->fetchMessages($thread, $afterId, $limit)->jsonSerialize()
+            $this->fetchMessages($thread, $limit, $afterId)->jsonSerialize()
         );
     }
 
@@ -352,8 +409,8 @@ class Context
      */
     public function fetchMessages(
         Thread $thread,
-        ?string $afterId = null,
-        int $limit = 20
+        int $limit = 20,
+        ?string $afterId = null
     ): MessageList {
         if ($thread->getServiceId() === null) {
             return new MessageList();
