@@ -334,6 +334,26 @@ class Context
     }
 
     /**
+     * Refresh a thread
+     *
+     * @param T $thread
+     */
+    public function refreshThread(
+        Thread $thread
+    ): void {
+        if ($thread->getServiceId() === null) {
+            throw Exceptional::Runtime(
+                'Cannot refresh thread that has not completed initialization'
+            );
+        }
+
+        $platform = $this->loadPlatform($thread->getServiceName());
+        $platform->refreshThread($thread);
+
+        $this->getRepository()->storeThread($thread);
+    }
+
+    /**
      * delete a thread
      *
      * @param string|Blueprint<J> $blueprint
