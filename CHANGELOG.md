@@ -1,3 +1,4 @@
+## v0.4.1 (2024-07-05)
 * Added refreshThread method to Context
 
 ## v0.4.0 (2024-05-22)
