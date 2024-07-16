@@ -298,6 +298,7 @@ class Context
      *
      * @param string|Blueprint<J> $blueprint
      * @param J $subject
+     * @return T|null
      */
     public function tryLoadThread(
         string|Blueprint $blueprint,
@@ -316,6 +317,7 @@ class Context
      *
      * @param string|Blueprint<J> $blueprint
      * @param J $subject
+     * @return T
      */
     public function loadThread(
         string|Blueprint $blueprint,
@@ -398,8 +400,58 @@ class Context
         $this->getRepository()->storeThread($thread);
     }
 
+
+
     /**
-     * delete a thread
+     * Load and poll a thread
+     *
+     * @param string|Blueprint<J> $blueprint
+     * @param J $subject
+     * @return T
+     */
+    public function loadAndPollThread(
+        string|Blueprint $blueprint,
+        Subject $subject
+    ): Thread {
+        $thread = $this->loadThread($blueprint, $subject);
+        return $this->pollThread($thread);
+    }
+
+    /**
+     * Poll thread for completion
+     *
+     * @param T $thread
+     * @return T
+     */
+    public function pollThread(
+        Thread $thread,
+        int $attempts = 5
+    ): Thread {
+        $count = 0;
+
+        do {
+            if ($thread->isReady()) {
+                break;
+            }
+
+            sleep(3);
+            $this->refreshThread($thread);
+            continue;
+        } while ($count++ < $attempts);
+
+        if (!$thread->isReady()) {
+            throw Exceptional::Runtime(
+                'Unable to get a response'
+            );
+        }
+
+        return $thread;
+    }
+
+
+
+    /**
+     * Load and delete a thread
      *
      * @param string|Blueprint<J> $blueprint
      * @param J $subject
