@@ -12,6 +12,7 @@ namespace DecodeLabs\Prophet;
 use DecodeLabs\Coercion;
 use DecodeLabs\Dictum;
 use DecodeLabs\Exceptional;
+use DecodeLabs\Exceptional\NotFoundException;
 use DecodeLabs\Prophet;
 use DecodeLabs\Prophet\Model\Assistant;
 use DecodeLabs\Prophet\Model\Message;
@@ -26,6 +27,7 @@ use DecodeLabs\Veneer;
  * @template T of Thread
  * @template S of Suggestion
  * @template J of Subject
+ * @template G
  */
 class Context
 {
@@ -63,6 +65,49 @@ class Context
 
         return $this->repository;
     }
+
+
+
+    /**
+     * Load generator
+     *
+     * @return Generator<J,G>
+     */
+    public function loadGenerator(
+        string $name
+    ): Generator {
+        try {
+            return $this->slingshot->resolveNamedInstance(Generator::class, $name);
+        } catch (NotFoundException $e) {
+            try {
+                $blueprint = $this->normalizeBlueprint($name);
+            } catch (NotFoundException $f) {
+                throw $e;
+            }
+
+            if ($blueprint instanceof Generator) {
+                return $blueprint;
+            }
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Generate result
+     *
+     * @param J $subject
+     * @return G
+     */
+    public function generate(
+        string $name,
+        Subject $subject
+    ): mixed {
+        return $this->loadGenerator($name)->generate($subject);
+    }
+
+
+
 
     /**
      * Load assistant if exists

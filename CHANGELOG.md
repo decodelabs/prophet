@@ -1,3 +1,5 @@
+* Added Generator structure
+
 ## v0.4.1 (2024-07-05)
 * Added refreshThread method to Context
 
