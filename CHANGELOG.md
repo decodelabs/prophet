@@ -1,3 +1,4 @@
+## v0.4.2 (2024-07-16)
 * Added Generator structure
 
 ## v0.4.1 (2024-07-05)
