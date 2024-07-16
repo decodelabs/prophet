@@ -1,3 +1,5 @@
+* Added Thread polling helpers
+
 ## v0.4.2 (2024-07-16)
 * Added Generator structure
 
