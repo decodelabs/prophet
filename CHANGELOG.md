@@ -1,3 +1,5 @@
+* Updated Veneer dependency
+
 ## v0.4.3 (2024-07-16)
 * Added Thread polling helpers
 
