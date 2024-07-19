@@ -11,6 +11,7 @@ namespace DecodeLabs\Prophet\Model;
 
 use Carbon\Carbon;
 use DateTimeInterface;
+use DecodeLabs\Prophet\Service\Medium;
 use JsonSerializable;
 
 interface Thread extends JsonSerializable
@@ -21,6 +22,8 @@ interface Thread extends JsonSerializable
 
     public function getSubjectType(): string;
     public function getSubjectId(): ?string;
+
+    public function getMedium(): Medium;
 
     public function getServiceName(): string;
 

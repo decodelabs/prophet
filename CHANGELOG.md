@@ -1,3 +1,6 @@
+* Added support for Json responses
+* Added public loadBlueprint() method to Context
+
 ## v0.4.4 (2024-07-17)
 * Updated Veneer dependency
 

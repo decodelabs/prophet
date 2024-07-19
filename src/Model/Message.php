@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace DecodeLabs\Prophet\Model;
 
 use Carbon\Carbon;
+use DecodeLabs\Exceptional;
 use JsonSerializable;
 
 class Message implements JsonSerializable
@@ -83,6 +84,23 @@ class Message implements JsonSerializable
         }
 
         return $output;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getJsonContent(): array
+    {
+        foreach ($this->content as $content) {
+            if ($content instanceof Content\Json) {
+                return $content->getContent();
+            }
+        }
+
+        throw Exceptional::UnexpectedValue([
+            'message' => 'Invalid JSON response',
+            'data' => $this->content
+        ]);
     }
 
     /**
