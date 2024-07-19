@@ -11,6 +11,7 @@ namespace DecodeLabs\Prophet\Model;
 
 use Carbon\Carbon;
 use DateTimeInterface;
+use DecodeLabs\Prophet\Service\Medium;
 use JsonSerializable;
 
 interface Assistant extends JsonSerializable
@@ -35,6 +36,8 @@ interface Assistant extends JsonSerializable
     ): void;
 
     public function getDescription(): ?string;
+
+    public function getMedium(): Medium;
 
     /**
      * @return array<string, mixed>

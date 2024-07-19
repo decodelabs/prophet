@@ -10,9 +10,9 @@ use DecodeLabs\Veneer\ProxyTrait as ProxyTrait;
 use DecodeLabs\Prophet\Context as Inst;
 use DecodeLabs\Prophet\Platform as Ref0;
 use DecodeLabs\Prophet\Repository as Ref1;
-use DecodeLabs\Prophet\Generator as Ref2;
-use DecodeLabs\Prophet\Subject as Ref3;
-use DecodeLabs\Prophet\Blueprint as Ref4;
+use DecodeLabs\Prophet\Blueprint as Ref2;
+use DecodeLabs\Prophet\Generator as Ref3;
+use DecodeLabs\Prophet\Subject as Ref4;
 use DecodeLabs\Prophet\Model\Assistant as Ref5;
 use DecodeLabs\Prophet\Model\Thread as Ref6;
 use DecodeLabs\Prophet\Model\MessageList as Ref7;
@@ -33,42 +33,45 @@ class Prophet implements Proxy
     public static function getRepository(): Ref1 {
         return static::$instance->getRepository();
     }
-    public static function loadGenerator(string $name): Ref2 {
+    public static function loadBlueprint(string $name): Ref2 {
+        return static::$instance->loadBlueprint(...func_get_args());
+    }
+    public static function loadGenerator(string $name): Ref3 {
         return static::$instance->loadGenerator(...func_get_args());
     }
-    public static function generate(string $name, Ref3 $subject): mixed {
+    public static function generate(string $name, Ref4 $subject): mixed {
         return static::$instance->generate(...func_get_args());
     }
-    public static function tryLoadAssistant(Ref4|string $blueprint, string $serviceName): ?Ref5 {
+    public static function tryLoadAssistant(Ref2|string $blueprint, string $serviceName): ?Ref5 {
         return static::$instance->tryLoadAssistant(...func_get_args());
     }
-    public static function loadAssistant(Ref4|string $blueprint, string $serviceName): Ref5 {
+    public static function loadAssistant(Ref2|string $blueprint, string $serviceName): Ref5 {
         return static::$instance->loadAssistant(...func_get_args());
     }
-    public static function loadFreshAssistant(Ref4|string $blueprint, string $serviceName): Ref5 {
+    public static function loadFreshAssistant(Ref2|string $blueprint, string $serviceName): Ref5 {
         return static::$instance->loadFreshAssistant(...func_get_args());
     }
     public static function updateAssistant(Ref5 $assistant): void {}
-    public static function loadAndDeleteAssistant(Ref4|string $blueprint, string $serviceName): bool {
+    public static function loadAndDeleteAssistant(Ref2|string $blueprint, string $serviceName): bool {
         return static::$instance->loadAndDeleteAssistant(...func_get_args());
     }
     public static function deleteAssistant(Ref5 $assistant): bool {
         return static::$instance->deleteAssistant(...func_get_args());
     }
-    public static function tryLoadThread(Ref4|string $blueprint, Ref3 $subject): ?Ref6 {
+    public static function tryLoadThread(Ref2|string $blueprint, Ref4 $subject): ?Ref6 {
         return static::$instance->tryLoadThread(...func_get_args());
     }
-    public static function loadThread(Ref4|string $blueprint, Ref3 $subject): Ref6 {
+    public static function loadThread(Ref2|string $blueprint, Ref4 $subject): Ref6 {
         return static::$instance->loadThread(...func_get_args());
     }
     public static function refreshThread(Ref6 $thread): void {}
-    public static function loadAndPollThread(Ref4|string $blueprint, Ref3 $subject): Ref6 {
+    public static function loadAndPollThread(Ref2|string $blueprint, Ref4 $subject): Ref6 {
         return static::$instance->loadAndPollThread(...func_get_args());
     }
     public static function pollThread(Ref6 $thread, int $attempts = 5): Ref6 {
         return static::$instance->pollThread(...func_get_args());
     }
-    public static function loadAndDeleteThread(Ref4|string $blueprint, Ref3 $subject): bool {
+    public static function loadAndDeleteThread(Ref2|string $blueprint, Ref4 $subject): bool {
         return static::$instance->loadAndDeleteThread(...func_get_args());
     }
     public static function deleteThread(Ref6 $thread): bool {

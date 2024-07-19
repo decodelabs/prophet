@@ -67,6 +67,34 @@ class Context
     }
 
 
+    /**
+     * Load blueprint
+     *
+     * @return Blueprint<J>
+     */
+    public function loadBlueprint(
+        string $name
+    ): Blueprint {
+        $name = Dictum::id($name);
+        return $this->slingshot->resolveNamedInstance(Blueprint::class, $name);
+    }
+
+    /**
+     * @param string|Blueprint<J> $blueprint
+     * @return Blueprint<J>
+     */
+    protected function normalizeBlueprint(
+        string|Blueprint $blueprint
+    ): Blueprint {
+        if (is_string($blueprint)) {
+            return $this->loadBlueprint($blueprint);
+        }
+
+        return $blueprint;
+    }
+
+
+
 
     /**
      * Load generator
@@ -490,20 +518,6 @@ class Context
         return $repository->deleteThread($thread);
     }
 
-    /**
-     * @param string|Blueprint<J> $blueprint
-     * @return Blueprint<J>
-     */
-    protected function normalizeBlueprint(
-        string|Blueprint $blueprint
-    ): Blueprint {
-        if (is_string($blueprint)) {
-            $blueprint = Dictum::id($blueprint);
-            $blueprint = $this->slingshot->resolveNamedInstance(Blueprint::class, $blueprint);
-        }
-
-        return $blueprint;
-    }
 
     /**
      * Serialize thread with messages

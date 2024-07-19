@@ -9,8 +9,20 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Prophet\Model;
 
+use DecodeLabs\Prophet;
+use DecodeLabs\Prophet\Service\Medium;
+
 trait ThreadTrait
 {
+    /**
+     * Get medim
+     */
+    public function getMedium(): Medium
+    {
+        $blueprint = Prophet::loadBlueprint($this->getAction());
+        return $blueprint->getMedium();
+    }
+
     /**
      * Is ready based on status
      */
