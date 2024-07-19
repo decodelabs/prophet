@@ -1,3 +1,4 @@
+## v0.4.5 (2024-07-19)
 * Added support for Json responses
 * Added public loadBlueprint() method to Context
 
