@@ -12,6 +12,9 @@ namespace DecodeLabs\Prophet\Model;
 use DecodeLabs\Prophet;
 use DecodeLabs\Prophet\Service\Medium;
 
+/**
+ * @phpstan-require-implements Assistant
+ */
 trait AssistantTrait
 {
     /**

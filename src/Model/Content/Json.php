@@ -42,10 +42,10 @@ class Json implements Content
         $output = json_decode($this->content, true);
 
         if ($output === null) {
-            throw Exceptional::UnexpectedValue([
-                'message' => 'Invalid JSON response',
-                'data' => $this->content
-            ]);
+            throw Exceptional::UnexpectedValue(
+                message: 'Invalid JSON response',
+                data: $this->content
+            );
         }
 
         return Coercion::toArray($output);

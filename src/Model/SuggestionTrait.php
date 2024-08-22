@@ -9,6 +9,9 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Prophet\Model;
 
+/**
+ * @phpstan-require-implements Suggestion
+ */
 trait SuggestionTrait
 {
     /**
