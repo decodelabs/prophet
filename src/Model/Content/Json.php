@@ -16,7 +16,7 @@ use DecodeLabs\Prophet\Service\Medium;
 
 class Json implements Content
 {
-    protected string $content;
+    protected(set) string $content;
 
     public function __construct(
         string $content
@@ -42,13 +42,15 @@ class Json implements Content
         $output = json_decode($this->content, true);
 
         if ($output === null) {
-            throw Exceptional::UnexpectedValue([
-                'message' => 'Invalid JSON response',
-                'data' => $this->content
-            ]);
+            throw Exceptional::UnexpectedValue(
+                message: 'Invalid JSON response',
+                data: $this->content
+            );
         }
 
-        return Coercion::toArray($output);
+        /** @var array<string,mixed> */
+        $output = Coercion::toArray($output);
+        return $output;
     }
 
     /**

@@ -97,10 +97,10 @@ class Message implements JsonSerializable
             }
         }
 
-        throw Exceptional::UnexpectedValue([
-            'message' => 'Invalid JSON response',
-            'data' => $this->content
-        ]);
+        throw Exceptional::UnexpectedValue(
+            message: 'Invalid JSON response',
+            data: $this->content
+        );
     }
 
     /**

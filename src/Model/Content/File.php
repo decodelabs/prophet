@@ -14,8 +14,8 @@ use DecodeLabs\Prophet\Service\Medium;
 
 class File implements Content
 {
-    protected Medium $medium;
-    protected string $fileId;
+    protected(set) Medium $medium;
+    protected(set) string $fileId;
 
     public function __construct(
         string $fileId,

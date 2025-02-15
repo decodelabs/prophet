@@ -14,6 +14,9 @@ use DecodeLabs\Prophet\Service\LanguageModelLevel;
 use DecodeLabs\Prophet\Service\Medium;
 use ReflectionClass;
 
+/**
+ * @phpstan-require-implements Blueprint
+ */
 trait BlueprintTrait
 {
     public function getAction(): string
