@@ -1,6 +1,12 @@
+## v0.4.7 (2025-02-15)
 * Updated Exceptional call signature
+* Updated dependencies
 * Added @phpstan-require-implements constraints
+* Upgraded PHPStan to v2
+* Tidied boolean logic
+* Fixed Exceptional syntax
 * Added PHP8.4 to CI workflow
+* Made PHP8.4 minimum version
 
 ## v0.4.6 (2024-08-21)
 * Updated dependencies

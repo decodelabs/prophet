@@ -16,7 +16,7 @@ use DecodeLabs\Prophet\Service\Medium;
 
 class Json implements Content
 {
-    protected string $content;
+    protected(set) string $content;
 
     public function __construct(
         string $content
@@ -48,7 +48,9 @@ class Json implements Content
             );
         }
 
-        return Coercion::toArray($output);
+        /** @var array<string,mixed> */
+        $output = Coercion::toArray($output);
+        return $output;
     }
 
     /**

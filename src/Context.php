@@ -273,7 +273,7 @@ class Context
 
         if (!$platform->updateAssistant($assistant)) {
             throw Exceptional::Runtime(
-                'Failed to update assistant'
+                message: 'Failed to update assistant'
             );
         }
 
@@ -418,7 +418,7 @@ class Context
     ): void {
         if ($thread->getServiceId() === null) {
             throw Exceptional::Runtime(
-                'Cannot refresh thread that has not completed initialization'
+                message: 'Cannot refresh thread that has not completed initialization'
             );
         }
 
@@ -469,7 +469,7 @@ class Context
 
         if (!$thread->isReady()) {
             throw Exceptional::Runtime(
-                'Unable to get a response'
+                message: 'Unable to get a response'
             );
         }
 
@@ -529,10 +529,13 @@ class Context
         int $limit = 20,
         ?string $afterId = null
     ): array {
-        return array_merge(
+        $output = array_merge(
             Coercion::toArray($thread->jsonSerialize()),
             $this->fetchMessages($thread, $limit, $afterId)->jsonSerialize()
         );
+
+        /** @var array<string,mixed> */
+        return $output;
     }
 
     /**
@@ -562,7 +565,7 @@ class Context
     ): Message {
         if ($thread->getServiceId() === null) {
             throw Exceptional::Runtime(
-                'Cannot reply to thread that has not completed initialization'
+                message: 'Cannot reply to thread that has not completed initialization'
             );
         }
 
@@ -579,4 +582,7 @@ class Context
 
 
 // Register the Veneer facade
-Veneer::register(Context::class, Prophet::class);
+Veneer\Manager::getGlobalManager()->register(
+    Context::class,
+    Prophet::class
+);
