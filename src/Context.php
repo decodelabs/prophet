@@ -530,7 +530,7 @@ class Context
         ?string $afterId = null
     ): array {
         $output = array_merge(
-            Coercion::toArray($thread->jsonSerialize()),
+            Coercion::asArray($thread->jsonSerialize()),
             $this->fetchMessages($thread, $limit, $afterId)->jsonSerialize()
         );
 
