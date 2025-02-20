@@ -49,7 +49,7 @@ class Json implements Content
         }
 
         /** @var array<string,mixed> */
-        $output = Coercion::toArray($output);
+        $output = Coercion::asArray($output);
         return $output;
     }
 

@@ -1,3 +1,6 @@
+## v0.4.8 (2025-02-20)
+* Upgraded Coercion dependency
+
 ## v0.4.7 (2025-02-15)
 * Updated Exceptional call signature
 * Updated dependencies
