@@ -1,3 +1,6 @@
+## v0.4.9 (2025-04-09)
+* Upgraded Slingshot dependency
+
 ## v0.4.8 (2025-02-20)
 * Upgraded Coercion dependency
 
