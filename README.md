@@ -11,8 +11,6 @@
 
 Prophet provides an opinionated set of interfaces for creating AI assistants that can be used across multiple platforms and services.
 
-_Get news and updates on the [DecodeLabs blog](https://blog.decodelabs.com)._
-
 ---
 
 ## Installation
