@@ -1,75 +1,169 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.<br>
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 ### Unreleased
 --
 
-## v0.4.9 (2025-04-09)
-* Upgraded Slingshot dependency
+---
 
-## v0.4.8 (2025-02-20)
-* Upgraded Coercion dependency
+### [v0.4.9](https://github.com/decodelabs/prophet/commits/v0.4.9) - 9th April 2025
 
-## v0.4.7 (2025-02-15)
-* Updated Exceptional call signature
-* Updated dependencies
-* Added @phpstan-require-implements constraints
-* Upgraded PHPStan to v2
-* Tidied boolean logic
-* Fixed Exceptional syntax
-* Added PHP8.4 to CI workflow
-* Made PHP8.4 minimum version
+- Upgraded Slingshot dependency
 
-## v0.4.6 (2024-08-21)
-* Updated dependencies
-* Updated Veneer dependency and Stub
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.4.8...v0.4.9)
 
-## v0.4.5 (2024-07-19)
-* Added support for Json responses
-* Added public loadBlueprint() method to Context
+---
 
-## v0.4.4 (2024-07-17)
-* Updated Veneer dependency
+### [v0.4.8](https://github.com/decodelabs/prophet/commits/v0.4.8) - 20th February 2025
 
-## v0.4.3 (2024-07-16)
-* Added Thread polling helpers
+- Upgraded Coercion dependency
 
-## v0.4.2 (2024-07-16)
-* Added Generator structure
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.4.7...v0.4.8)
 
-## v0.4.1 (2024-07-05)
-* Added refreshThread method to Context
+---
 
-## v0.4.0 (2024-05-22)
-* Improved delete methods on Context
-* Fixed limit parameter placement in Context
-* Added text content combiner
+### [v0.4.7](https://github.com/decodelabs/prophet/commits/v0.4.7) - 15th February 2025
 
-## v0.3.2 (2024-05-21)
-* Fixed Message jsonSerialize
-* Fixed composer dev version
+- Updated Exceptional call signature
+- Updated dependencies
+- Added @phpstan-require-implements constraints
+- Upgraded PHPStan to v2
+- Tidied boolean logic
+- Fixed Exceptional syntax
+- Added PHP8.4 to CI workflow
+- Made PHP8.4 minimum version
 
-## v0.3.1 (2024-05-21)
-* Fixed File Content type
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.4.6...v0.4.7)
 
-## v0.3.0 (2024-05-21)
-* Added Message model structures
-* Added Suggestions to Repository
-* Moved Repository interface to root
-* Added JsonSerializable to Suggestion interface
-* Improved default isReady() implementation
+---
 
-## v0.2.1 (2024-05-20)
-* Added model traits
+### [v0.4.6](https://github.com/decodelabs/prophet/commits/v0.4.6) - 21st August 2024
 
-## v0.2.0 (2024-05-15)
-* Added Thread reset functionality
-* Added Assistant update support
-* Added delete handlers to Repository interface
+- Updated dependencies
+- Updated Veneer dependency and Stub
 
-## v0.1.2 (2024-04-29)
-* Fixed Veneer stubs in gitattributes
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.4.5...v0.4.6)
 
-## v0.1.1 (2024-04-26)
-* Updated Archetype dependency
-* Updated dependency list
+---
 
-## v0.1.0 (2024-04-25)
-* Built initial implementation
+### [v0.4.5](https://github.com/decodelabs/prophet/commits/v0.4.5) - 19th July 2024
+
+- Added support for Json responses
+- Added public loadBlueprint() method to Context
+
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.4.4...v0.4.5)
+
+---
+
+### [v0.4.4](https://github.com/decodelabs/prophet/commits/v0.4.4) - 17th July 2024
+
+- Updated Veneer dependency
+
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.4.3...v0.4.4)
+
+---
+
+### [v0.4.3](https://github.com/decodelabs/prophet/commits/v0.4.3) - 16th July 2024
+
+- Added Thread polling helpers
+
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.4.2...v0.4.3)
+
+---
+
+### [v0.4.2](https://github.com/decodelabs/prophet/commits/v0.4.2) - 16th July 2024
+
+- Added Generator structure
+
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.4.1...v0.4.2)
+
+---
+
+### [v0.4.1](https://github.com/decodelabs/prophet/commits/v0.4.1) - 5th July 2024
+
+- Added refreshThread method to Context
+
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.4.0...v0.4.1)
+
+---
+
+### [v0.4.0](https://github.com/decodelabs/prophet/commits/v0.4.0) - 22nd May 2024
+
+- Improved delete methods on Context
+- Fixed limit parameter placement in Context
+- Added text content combiner
+
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.3.2...v0.4.0)
+
+---
+
+### [v0.3.2](https://github.com/decodelabs/prophet/commits/v0.3.2) - 21st May 2024
+
+- Fixed Message jsonSerialize
+- Fixed composer dev version
+
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.3.1...v0.3.2)
+
+---
+
+### [v0.3.1](https://github.com/decodelabs/prophet/commits/v0.3.1) - 21st May 2024
+
+- Fixed File Content type
+
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.3.0...v0.3.1)
+
+---
+
+### [v0.3.0](https://github.com/decodelabs/prophet/commits/v0.3.0) - 21st May 2024
+
+- Added Message model structures
+- Added Suggestions to Repository
+- Moved Repository interface to root
+- Added JsonSerializable to Suggestion interface
+- Improved default isReady() implementation
+
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.2.1...v0.3.0)
+
+---
+
+### [v0.2.1](https://github.com/decodelabs/prophet/commits/v0.2.1) - 20th May 2024
+
+- Added model traits
+
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.2.0...v0.2.1)
+
+---
+
+### [v0.2.0](https://github.com/decodelabs/prophet/commits/v0.2.0) - 15th May 2024
+
+- Added Thread reset functionality
+- Added Assistant update support
+- Added delete handlers to Repository interface
+
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.1.2...v0.2.0)
+
+---
+
+### [v0.1.2](https://github.com/decodelabs/prophet/commits/v0.1.2) - 29th April 2024
+
+- Fixed Veneer stubs in gitattributes
+
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.1.1...v0.1.2)
+
+---
+
+### [v0.1.1](https://github.com/decodelabs/prophet/commits/v0.1.1) - 26th April 2024
+
+- Updated Archetype dependency
+- Updated dependency list
+
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.1.0...v0.1.1)
+
+---
+
+### [v0.1.0](https://github.com/decodelabs/prophet/commits/v0.1.0) - 25th April 2024
+
+- Built initial implementation
