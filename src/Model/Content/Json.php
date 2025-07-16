@@ -16,7 +16,7 @@ use DecodeLabs\Prophet\Service\Medium;
 
 class Json implements Content
 {
-    protected(set) string $content;
+    public protected(set) string $content;
 
     public function __construct(
         string $content

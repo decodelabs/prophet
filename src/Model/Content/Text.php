@@ -14,8 +14,8 @@ use DecodeLabs\Prophet\Service\Medium;
 
 class Text implements Content
 {
-    protected(set) Medium $medium = Medium::Text;
-    protected(set) string $content;
+    public protected(set) Medium $medium = Medium::Text;
+    public protected(set) string $content;
 
     public function __construct(
         string $content,

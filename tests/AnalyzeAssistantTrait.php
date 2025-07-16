@@ -11,7 +11,6 @@ namespace DecodeLabs\Prophet\Tests;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use DecodeLabs\Prophet\Model\RunStatus;
 use DecodeLabs\Prophet\Model\Assistant;
 use DecodeLabs\Prophet\Model\AssistantTrait;
 use DecodeLabs\Prophet\Service\Medium;
