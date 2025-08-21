@@ -5,12 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Unreleased
+--
+
+---
+
+### [v0.5.0](https://github.com/decodelabs/prophet/commits/v0.5.0) - 21st August 2025
+
 - Added Kingdom Service support
 - Removed Veneer dependency
 - Upgraded Atlas to v0.14
 - Upgraded Archetype to v0.4
 - Upgraded Dictum to v0.7
 - Upgraded Slingshot to v0.3
+
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.4.12...v0.5.0)
 
 ---
 
