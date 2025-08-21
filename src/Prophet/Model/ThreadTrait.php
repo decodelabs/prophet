@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Prophet\Model;
 
+use DecodeLabs\Monarch;
 use DecodeLabs\Prophet;
 use DecodeLabs\Prophet\Service\Medium;
 
@@ -17,18 +18,13 @@ use DecodeLabs\Prophet\Service\Medium;
  */
 trait ThreadTrait
 {
-    /**
-     * Get medim
-     */
     public function getMedium(): Medium
     {
-        $blueprint = Prophet::loadBlueprint($this->getAction());
+        $prophet = Monarch::getService(Prophet::class);
+        $blueprint = $prophet->loadBlueprint($this->getAction());
         return $blueprint->getMedium();
     }
 
-    /**
-     * Is ready based on status
-     */
     public function isReady(): bool
     {
         return
@@ -42,8 +38,6 @@ trait ThreadTrait
     }
 
     /**
-     * Convert to serializable array
-     *
      * @return array<string, mixed>
      */
     public function jsonSerialize(): mixed

@@ -7,20 +7,21 @@
 
 declare(strict_types=1);
 
-namespace DecodeLabs\Prophet;
+namespace DecodeLabs;
 
-use DecodeLabs\Coercion;
-use DecodeLabs\Dictum;
-use DecodeLabs\Exceptional;
 use DecodeLabs\Exceptional\NotFoundException;
-use DecodeLabs\Prophet;
+use DecodeLabs\Kingdom\Service;
+use DecodeLabs\Kingdom\ServiceTrait;
+use DecodeLabs\Prophet\Blueprint;
+use DecodeLabs\Prophet\Generator;
 use DecodeLabs\Prophet\Model\Assistant;
 use DecodeLabs\Prophet\Model\Message;
 use DecodeLabs\Prophet\Model\MessageList;
 use DecodeLabs\Prophet\Model\Suggestion;
 use DecodeLabs\Prophet\Model\Thread;
-use DecodeLabs\Slingshot;
-use DecodeLabs\Veneer;
+use DecodeLabs\Prophet\Platform;
+use DecodeLabs\Prophet\Repository;
+use DecodeLabs\Prophet\Subject;
 
 /**
  * @template A of Assistant
@@ -29,8 +30,10 @@ use DecodeLabs\Veneer;
  * @template J of Subject
  * @template G
  */
-class Context
+class Prophet implements Service
 {
+    use ServiceTrait;
+
     /**
      * @var Repository<A,T,S>|null
      */
@@ -43,9 +46,6 @@ class Context
         $this->slingshot = $slingshot ?? new Slingshot();
     }
 
-    /**
-     * Load platform
-     */
     public function loadPlatform(
         string $name
     ): Platform {
@@ -53,8 +53,6 @@ class Context
     }
 
     /**
-     * Get the repository instance
-     *
      * @return Repository<A,T,S>
      */
     public function getRepository(): Repository
@@ -68,8 +66,6 @@ class Context
 
 
     /**
-     * Load blueprint
-     *
      * @return Blueprint<J>
      */
     public function loadBlueprint(
@@ -97,8 +93,6 @@ class Context
 
 
     /**
-     * Load generator
-     *
      * @return Generator<J,G>
      */
     public function loadGenerator(
@@ -122,8 +116,6 @@ class Context
     }
 
     /**
-     * Generate result
-     *
      * @param J $subject
      * @return G
      */
@@ -138,8 +130,6 @@ class Context
 
 
     /**
-     * Load assistant if exists
-     *
      * @param string|Blueprint<J> $blueprint
      */
     public function tryLoadAssistant(
@@ -154,8 +144,6 @@ class Context
     }
 
     /**
-     * Load assistant
-     *
      * @param string|Blueprint<J> $blueprint
      */
     public function loadAssistant(
@@ -170,8 +158,6 @@ class Context
     }
 
     /**
-     * Load assistant for new thread
-     *
      * @param string|Blueprint<J> $blueprint
      */
     public function loadFreshAssistant(
@@ -188,10 +174,8 @@ class Context
 
 
     /**
-     * Load assistant
-     *
      * @param string|Blueprint<J> $blueprint
-     * @phpstan-return ($create is true ? A : A|null)
+     * @return ($create is true ? A : A|null)
      */
     protected function loadOrCreateAssistant(
         string|Blueprint $blueprint,
@@ -262,8 +246,6 @@ class Context
     }
 
     /**
-     * Update assistant
-     *
      * @param A $assistant
      */
     public function updateAssistant(
@@ -281,8 +263,6 @@ class Context
     }
 
     /**
-     * Delete assistant
-     *
      * @param string|Blueprint<J> $blueprint
      */
     public function loadAndDeleteAssistant(
@@ -303,8 +283,6 @@ class Context
     }
 
     /**
-     * Delete assistant
-     *
      * @param A $assistant
      */
     public function deleteAssistant(
@@ -322,8 +300,6 @@ class Context
 
 
     /**
-     * Load a thread
-     *
      * @param string|Blueprint<J> $blueprint
      * @param J $subject
      * @return T|null
@@ -341,8 +317,6 @@ class Context
 
 
     /**
-     * Load a thread
-     *
      * @param string|Blueprint<J> $blueprint
      * @param J $subject
      * @return T
@@ -359,11 +333,9 @@ class Context
     }
 
     /**
-     * Load a thread
-     *
      * @param string|Blueprint<J> $blueprint
      * @param J $subject
-     * @phpstan-return ($create is true ? T : T|null)
+     * @return ($create is true ? T : T|null)
      */
     protected function loadOrCreateThread(
         string|Blueprint $blueprint,
@@ -409,8 +381,6 @@ class Context
     }
 
     /**
-     * Refresh a thread
-     *
      * @param T $thread
      */
     public function refreshThread(
@@ -431,8 +401,6 @@ class Context
 
 
     /**
-     * Load and poll a thread
-     *
      * @param string|Blueprint<J> $blueprint
      * @param J $subject
      * @return T
@@ -446,8 +414,6 @@ class Context
     }
 
     /**
-     * Poll thread for completion
-     *
      * @param T $thread
      * @return T
      */
@@ -479,8 +445,6 @@ class Context
 
 
     /**
-     * Load and delete a thread
-     *
      * @param string|Blueprint<J> $blueprint
      * @param J $subject
      */
@@ -502,8 +466,6 @@ class Context
     }
 
     /**
-     * Delete a thread
-     *
      * @param T $thread
      */
     public function deleteThread(
@@ -520,8 +482,6 @@ class Context
 
 
     /**
-     * Serialize thread with messages
-     *
      * @return array<string, mixed>
      */
     public function serializeThreadWithMessages(
@@ -538,9 +498,6 @@ class Context
         return $output;
     }
 
-    /**
-     * Fetch messages
-     */
     public function fetchMessages(
         Thread $thread,
         int $limit = 20,
@@ -554,9 +511,8 @@ class Context
         return $platform->fetchMessages($thread, $limit, $afterId);
     }
 
+
     /**
-     * Send reply to thread
-     *
      * @param T $thread
      */
     public function reply(
@@ -579,10 +535,3 @@ class Context
         return $output;
     }
 }
-
-
-// Register the Veneer facade
-Veneer\Manager::getGlobalManager()->register(
-    Context::class,
-    Prophet::class
-);

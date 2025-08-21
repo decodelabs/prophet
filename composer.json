@@ -11,13 +11,14 @@
     "require": {
         "php": "^8.4",
 
-        "decodelabs/archetype": "^0.3.10",
-        "decodelabs/atlas": "^0.13.1",
+        "decodelabs/archetype": "^0.4",
+        "decodelabs/atlas": "^0.14",
         "decodelabs/coercion": "^0.3.3",
-        "decodelabs/dictum": "^0.6.10",
+        "decodelabs/dictum": "^0.7",
         "decodelabs/exceptional": "^0.6.1",
-        "decodelabs/slingshot": "^0.2.1",
-        "decodelabs/veneer": "^0.12.8",
+        "decodelabs/kingdom": "^0.1",
+        "decodelabs/monarch": "^0.2",
+        "decodelabs/slingshot": "^0.3",
 
         "nesbot/carbon": "^3"
     },
@@ -28,8 +29,8 @@
         "psr-4": {
             "DecodeLabs\\Prophet\\": "src/"
         },
-        "files": [
-            "src/Context.php"
+        "classmap": [
+            "src/Prophet.php"
         ]
     },
     "extra": {

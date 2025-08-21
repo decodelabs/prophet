@@ -50,70 +50,42 @@ interface Platform
         array $features = []
     ): bool;
 
-    /**
-     * Find assistant by action
-     */
     public function findAssistant(
         Assistant $assistant
     ): bool;
 
-    /**
-     * Create assistant object if supported
-     */
     public function createAssistant(
         Assistant $assistant
     ): void;
 
-    /**
-     * Update assistant model if needed
-     */
     public function updateAssistant(
         Assistant $assistant
     ): bool;
 
-    /**
-     * Delete assistant object if supported
-     */
     public function deleteAssistant(
         Assistant $assistant
     ): bool;
 
-    /**
-     * Start thread
-     */
     public function startThread(
         Assistant $assistant,
         Thread $thread,
         ?string $additionalInstructions = null
     ): void;
 
-    /**
-     * Refresh thread
-     */
     public function refreshThread(
         Thread $thread
     ): void;
 
-    /**
-     * Delete thread
-     */
     public function deleteThread(
         Thread $thread
     ): bool;
 
-
-    /**
-     * Fetch messages
-     */
     public function fetchMessages(
         Thread $thread,
         int $limit = 20,
         string|int|null $after = null
     ): MessageList;
 
-    /**
-     * Send reply
-     */
     public function reply(
         Assistant $assistant,
         Thread $thread,

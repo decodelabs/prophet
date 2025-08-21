@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Prophet\Model;
 
+use DecodeLabs\Monarch;
 use DecodeLabs\Prophet;
 use DecodeLabs\Prophet\Service\Medium;
 
@@ -17,12 +18,10 @@ use DecodeLabs\Prophet\Service\Medium;
  */
 trait AssistantTrait
 {
-    /**
-     * Get medim
-     */
     public function getMedium(): Medium
     {
-        $blueprint = Prophet::loadBlueprint($this->getAction());
+        $prophet = Monarch::getService(Prophet::class);
+        $blueprint = $prophet->loadBlueprint($this->getAction());
         return $blueprint->getMedium();
     }
 

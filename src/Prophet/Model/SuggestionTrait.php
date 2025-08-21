@@ -15,8 +15,6 @@ namespace DecodeLabs\Prophet\Model;
 trait SuggestionTrait
 {
     /**
-     * Convert to serializable array
-     *
      * @return array<string, mixed>
      */
     public function jsonSerialize(): mixed
