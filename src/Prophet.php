@@ -98,21 +98,24 @@ class Prophet implements Service
     public function loadGenerator(
         string $name
     ): Generator {
+        $output = $this->slingshot->tryResolveNamedInstance(Generator::class, $name);
+
+        if ($output !== null) {
+            return $output;
+        }
+
         try {
-            return $this->slingshot->resolveNamedInstance(Generator::class, $name);
-        } catch (NotFoundException $e) {
-            try {
-                $blueprint = $this->normalizeBlueprint($name);
-            } catch (NotFoundException $f) {
-                throw $e;
-            }
+            $blueprint = $this->normalizeBlueprint($name);
 
             if ($blueprint instanceof Generator) {
                 return $blueprint;
             }
-
-            throw $e;
+        } catch (NotFoundException $f) {
         }
+
+        throw Exceptional::NotFound(
+            message: 'Unable to resolve generator ' . $name
+        );
     }
 
     /**
