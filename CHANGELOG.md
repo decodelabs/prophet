@@ -5,7 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Unreleased
+--
+
+---
+
+### [v0.5.2](https://github.com/decodelabs/prophet/commits/v0.5.2) - 24th August 2025
+
 - Fixed Generator loader
+
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.5.1...v0.5.2)
 
 ---
 
