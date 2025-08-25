@@ -23,19 +23,12 @@ use DecodeLabs\Prophet\Platform;
 use DecodeLabs\Prophet\Repository;
 use DecodeLabs\Prophet\Subject;
 
-/**
- * @template A of Assistant
- * @template T of Thread
- * @template S of Suggestion
- * @template J of Subject
- * @template G
- */
 class Prophet implements Service
 {
     use ServiceTrait;
 
     /**
-     * @var Repository<A,T,S>|null
+     * @var ?Repository<Assistant,Thread,Suggestion>
      */
     protected ?Repository $repository = null;
     protected Slingshot $slingshot;
@@ -53,7 +46,7 @@ class Prophet implements Service
     }
 
     /**
-     * @return Repository<A,T,S>
+     * @return Repository<Assistant,Thread,Suggestion>
      */
     public function getRepository(): Repository
     {
@@ -66,7 +59,7 @@ class Prophet implements Service
 
 
     /**
-     * @return Blueprint<J>
+     * @return Blueprint<Subject>
      */
     public function loadBlueprint(
         string $name
@@ -76,8 +69,8 @@ class Prophet implements Service
     }
 
     /**
-     * @param string|Blueprint<J> $blueprint
-     * @return Blueprint<J>
+     * @param string|Blueprint<Subject> $blueprint
+     * @return Blueprint<Subject>
      */
     protected function normalizeBlueprint(
         string|Blueprint $blueprint
@@ -93,7 +86,7 @@ class Prophet implements Service
 
 
     /**
-     * @return Generator<J,G>
+     * @return Generator<Subject,mixed>
      */
     public function loadGenerator(
         string $name
@@ -118,10 +111,6 @@ class Prophet implements Service
         );
     }
 
-    /**
-     * @param J $subject
-     * @return G
-     */
     public function generate(
         string $name,
         Subject $subject
@@ -133,7 +122,7 @@ class Prophet implements Service
 
 
     /**
-     * @param string|Blueprint<J> $blueprint
+     * @param string|Blueprint<Subject> $blueprint
      */
     public function tryLoadAssistant(
         string|Blueprint $blueprint,
@@ -147,7 +136,7 @@ class Prophet implements Service
     }
 
     /**
-     * @param string|Blueprint<J> $blueprint
+     * @param string|Blueprint<Subject> $blueprint
      */
     public function loadAssistant(
         string|Blueprint $blueprint,
@@ -161,7 +150,7 @@ class Prophet implements Service
     }
 
     /**
-     * @param string|Blueprint<J> $blueprint
+     * @param string|Blueprint<Subject> $blueprint
      */
     public function loadFreshAssistant(
         string|Blueprint $blueprint,
@@ -177,8 +166,8 @@ class Prophet implements Service
 
 
     /**
-     * @param string|Blueprint<J> $blueprint
-     * @return ($create is true ? A : A|null)
+     * @param string|Blueprint<Subject> $blueprint
+     * @return ($create is true ? Assistant : ?Assistant)
      */
     protected function loadOrCreateAssistant(
         string|Blueprint $blueprint,
@@ -248,9 +237,6 @@ class Prophet implements Service
         return $assistant;
     }
 
-    /**
-     * @param A $assistant
-     */
     public function updateAssistant(
         Assistant $assistant
     ): void {
@@ -266,7 +252,7 @@ class Prophet implements Service
     }
 
     /**
-     * @param string|Blueprint<J> $blueprint
+     * @param string|Blueprint<Subject> $blueprint
      */
     public function loadAndDeleteAssistant(
         string|Blueprint $blueprint,
@@ -285,9 +271,6 @@ class Prophet implements Service
         return $this->deleteAssistant($assistant);
     }
 
-    /**
-     * @param A $assistant
-     */
     public function deleteAssistant(
         Assistant $assistant
     ): bool {
@@ -303,9 +286,9 @@ class Prophet implements Service
 
 
     /**
-     * @param string|Blueprint<J> $blueprint
-     * @param J $subject
-     * @return T|null
+     * @template TSubject of Subject
+     * @param string|Blueprint<TSubject> $blueprint
+     * @param TSubject $subject
      */
     public function tryLoadThread(
         string|Blueprint $blueprint,
@@ -320,9 +303,7 @@ class Prophet implements Service
 
 
     /**
-     * @param string|Blueprint<J> $blueprint
-     * @param J $subject
-     * @return T
+     * @param string|Blueprint<Subject> $blueprint
      */
     public function loadThread(
         string|Blueprint $blueprint,
@@ -336,9 +317,10 @@ class Prophet implements Service
     }
 
     /**
-     * @param string|Blueprint<J> $blueprint
-     * @param J $subject
-     * @return ($create is true ? T : T|null)
+     * @template TSubject of Subject
+     * @param string|Blueprint<TSubject> $blueprint
+     * @param TSubject $subject
+     * @return ($create is true ? Thread : ?Thread)
      */
     protected function loadOrCreateThread(
         string|Blueprint $blueprint,
@@ -383,9 +365,6 @@ class Prophet implements Service
         return $thread;
     }
 
-    /**
-     * @param T $thread
-     */
     public function refreshThread(
         Thread $thread
     ): void {
@@ -404,9 +383,10 @@ class Prophet implements Service
 
 
     /**
-     * @param string|Blueprint<J> $blueprint
-     * @param J $subject
-     * @return T
+     * @template TSubject of Subject
+     * @param string|Blueprint<TSubject> $blueprint
+     * @param TSubject $subject
+     * @return Thread
      */
     public function loadAndPollThread(
         string|Blueprint $blueprint,
@@ -416,10 +396,6 @@ class Prophet implements Service
         return $this->pollThread($thread);
     }
 
-    /**
-     * @param T $thread
-     * @return T
-     */
     public function pollThread(
         Thread $thread,
         int $attempts = 5
@@ -448,8 +424,9 @@ class Prophet implements Service
 
 
     /**
-     * @param string|Blueprint<J> $blueprint
-     * @param J $subject
+     * @template TSubject of Subject
+     * @param string|Blueprint<TSubject> $blueprint
+     * @param TSubject $subject
      */
     public function loadAndDeleteThread(
         string|Blueprint $blueprint,
@@ -468,9 +445,6 @@ class Prophet implements Service
         return $this->deleteThread($thread);
     }
 
-    /**
-     * @param T $thread
-     */
     public function deleteThread(
         Thread $thread
     ): bool {
@@ -485,7 +459,7 @@ class Prophet implements Service
 
 
     /**
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     public function serializeThreadWithMessages(
         Thread $thread,
@@ -515,9 +489,6 @@ class Prophet implements Service
     }
 
 
-    /**
-     * @param T $thread
-     */
     public function reply(
         Thread $thread,
         string $message
