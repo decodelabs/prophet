@@ -15,6 +15,8 @@ Prophet provides an opinionated set of interfaces for creating AI assistants tha
 
 ## Installation
 
+This package requires PHP 8.4 or higher.
+
 Install via Composer:
 
 ```bash
