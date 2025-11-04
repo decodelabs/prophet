@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @package Prophet
- * @license http://opensource.org/licenses/MIT
+ * Prophet
+ * @license https://opensource.org/licenses/MIT
  */
 
 declare(strict_types=1);
