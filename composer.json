@@ -2,7 +2,7 @@
     "name": "decodelabs/prophet",
     "description": "Generalised interfaces for creating AI assistants",
     "type": "library",
-    "keywords": [],
+    "keywords": [ ],
     "license": "MIT",
     "authors": [
         {
@@ -25,7 +25,7 @@
         "nesbot/carbon": "^3"
     },
     "require-dev": {
-        "decodelabs/chorus": "^0.1",
+        "decodelabs/chorus": ">0",
         "decodelabs/phpstan-decodelabs": "^0.7"
     },
     "autoload": {
