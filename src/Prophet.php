@@ -13,28 +13,21 @@ use DecodeLabs\Exceptional\NotFoundException;
 use DecodeLabs\Kingdom\Service;
 use DecodeLabs\Kingdom\ServiceTrait;
 use DecodeLabs\Prophet\Blueprint;
+use DecodeLabs\Prophet\GenerationOptions;
+use DecodeLabs\Prophet\GenerationResult;
 use DecodeLabs\Prophet\Generator;
-use DecodeLabs\Prophet\Model\Assistant;
-use DecodeLabs\Prophet\Model\Message;
-use DecodeLabs\Prophet\Model\MessageList;
-use DecodeLabs\Prophet\Model\Suggestion;
-use DecodeLabs\Prophet\Model\Thread;
 use DecodeLabs\Prophet\Platform;
-use DecodeLabs\Prophet\Repository;
 use DecodeLabs\Prophet\Subject;
 
 class Prophet implements Service
 {
     use ServiceTrait;
 
-    /**
-     * @var ?Repository<Assistant,Thread,Suggestion>
-     */
-    protected ?Repository $repository = null;
     protected Slingshot $slingshot;
 
     public function __construct(
-        ?Slingshot $slingshot = null
+        ?Slingshot $slingshot = null,
+        protected ?string $defaultPlatform = null
     ) {
         $this->slingshot = $slingshot ?? new Slingshot();
     }
@@ -44,19 +37,6 @@ class Prophet implements Service
     ): Platform {
         return $this->slingshot->resolveNamedInstance(Platform::class, $name);
     }
-
-    /**
-     * @return Repository<Assistant,Thread,Suggestion>
-     */
-    public function getRepository(): Repository
-    {
-        if ($this->repository === null) {
-            $this->repository = $this->slingshot->resolveInstance(Repository::class);
-        }
-
-        return $this->repository;
-    }
-
 
     /**
      * @return Blueprint<Subject>
@@ -82,9 +62,6 @@ class Prophet implements Service
         return $blueprint;
     }
 
-
-
-
     /**
      * @return Generator<Subject,mixed>
      */
@@ -103,7 +80,7 @@ class Prophet implements Service
             if ($blueprint instanceof Generator) {
                 return $blueprint;
             }
-        } catch (NotFoundException $f) {
+        } catch (NotFoundException) {
         }
 
         throw Exceptional::NotFound(
@@ -118,394 +95,60 @@ class Prophet implements Service
         return $this->loadGenerator($name)->generate($subject);
     }
 
-
-
-
     /**
      * @param string|Blueprint<Subject> $blueprint
      */
-    public function tryLoadAssistant(
-        string|Blueprint $blueprint,
-        string $serviceName,
-    ): ?Assistant {
-        return $this->loadOrCreateAssistant(
-            blueprint: $blueprint,
-            serviceName: $serviceName,
-            create: false
-        );
-    }
-
-    /**
-     * @param string|Blueprint<Subject> $blueprint
-     */
-    public function loadAssistant(
-        string|Blueprint $blueprint,
-        string $serviceName
-    ): Assistant {
-        return $this->loadOrCreateAssistant(
-            blueprint: $blueprint,
-            serviceName: $serviceName,
-            create: true
-        );
-    }
-
-    /**
-     * @param string|Blueprint<Subject> $blueprint
-     */
-    public function loadFreshAssistant(
-        string|Blueprint $blueprint,
-        string $serviceName
-    ): Assistant {
-        return $this->loadOrCreateAssistant(
-            blueprint: $blueprint,
-            serviceName: $serviceName,
-            create: true,
-            fresh: true
-        );
-    }
-
-
-    /**
-     * @param string|Blueprint<Subject> $blueprint
-     * @return ($create is true ? Assistant : ?Assistant)
-     */
-    protected function loadOrCreateAssistant(
-        string|Blueprint $blueprint,
-        string $serviceName,
-        bool $create,
-        bool $fresh = false
-    ): ?Assistant {
-        $repository = $this->getRepository();
-        $blueprint = $this->normalizeBlueprint($blueprint);
-        $assistant = $repository->fetchAssistant($blueprint, $serviceName);
-        $platform = $this->loadPlatform($serviceName);
-        $store = false;
-
-        if (!$assistant) {
-            if (!$create) {
-                return null;
-            }
-
-            $assistant = $repository->createAssistant($blueprint, $serviceName);
-            $platform->findAssistant($assistant);
-            $store = true;
-            $fresh = false;
-        }
-
-        $existingModel = $assistant->getLanguageModelName();
-
-        if ($existingModel === null) {
-            $assistant->setLanguageModelName(
-                $existingModel = $platform->suggestModel(
-                    $blueprint->getMedium(),
-                    $blueprint->getLanguageModelLevel(),
-                    $blueprint->getFeatures()
-                )
-            );
-            $store = true;
-        }
-
-        if ($assistant->getServiceId() === null) {
-            $platform->createAssistant($assistant);
-            $store = true;
-        } elseif (
-            $fresh &&
-            $existingModel !== ($model = $platform->suggestModel(
-                $blueprint->getMedium(),
-                $blueprint->getLanguageModelLevel(),
-                $blueprint->getFeatures()
-            )) &&
-            $platform->shouldUpdateModel(
-                $existingModel,
-                $model,
-                $blueprint->getMedium(),
-                $blueprint->getLanguageModelLevel(),
-                $blueprint->getFeatures()
-            )
-        ) {
-            $assistant->setLanguageModelName($model);
-
-            if ($platform->updateAssistant($assistant)) {
-                $store = true;
-            }
-        }
-
-        if ($store) {
-            $repository->storeAssistant($assistant);
-        }
-
-        return $assistant;
-    }
-
-    public function updateAssistant(
-        Assistant $assistant
-    ): void {
-        $platform = $this->loadPlatform($assistant->getServiceName());
-
-        if (!$platform->updateAssistant($assistant)) {
-            throw Exceptional::Runtime(
-                message: 'Failed to update assistant'
-            );
-        }
-
-        $this->getRepository()->storeAssistant($assistant);
-    }
-
-    /**
-     * @param string|Blueprint<Subject> $blueprint
-     */
-    public function loadAndDeleteAssistant(
-        string|Blueprint $blueprint,
-        string $serviceName
-    ): bool {
-        $assistant = $this->loadOrCreateAssistant(
-            blueprint: $blueprint,
-            serviceName: $serviceName,
-            create: false
-        );
-
-        if (!$assistant) {
-            return false;
-        }
-
-        return $this->deleteAssistant($assistant);
-    }
-
-    public function deleteAssistant(
-        Assistant $assistant
-    ): bool {
-        if ($assistant->getServiceId() !== null) {
-            $platform = $this->loadPlatform($assistant->getServiceName());
-            $platform->deleteAssistant($assistant);
-        }
-
-        $repository = $this->getRepository();
-        return $repository->deleteAssistant($assistant);
-    }
-
-
-
-    /**
-     * @template TSubject of Subject
-     * @param string|Blueprint<TSubject> $blueprint
-     * @param TSubject $subject
-     */
-    public function tryLoadThread(
-        string|Blueprint $blueprint,
-        Subject $subject
-    ): ?Thread {
-        return $this->loadOrCreateThread(
-            blueprint: $blueprint,
-            subject: $subject,
-            create: false
-        );
-    }
-
-
-    /**
-     * @param string|Blueprint<Subject> $blueprint
-     */
-    public function loadThread(
-        string|Blueprint $blueprint,
-        Subject $subject
-    ): Thread {
-        return $this->loadOrCreateThread(
-            blueprint: $blueprint,
-            subject: $subject,
-            create: true
-        );
-    }
-
-    /**
-     * @template TSubject of Subject
-     * @param string|Blueprint<TSubject> $blueprint
-     * @param TSubject $subject
-     * @return ($create is true ? Thread : ?Thread)
-     */
-    protected function loadOrCreateThread(
+    public function respond(
         string|Blueprint $blueprint,
         Subject $subject,
-        bool $create
-    ): ?Thread {
-        $repository = $this->getRepository();
+        ?GenerationOptions $options = null
+    ): GenerationResult {
+        $options ??= new GenerationOptions();
         $blueprint = $this->normalizeBlueprint($blueprint);
-        $store = false;
 
-        if (!$thread = $repository->fetchThread($blueprint, $subject)) {
-            if (!$create) {
-                return null;
-            }
-
-            $thread = $repository->createThread($blueprint, $subject);
-            $store = true;
-        }
-
-        $assistant = $this->loadFreshAssistant($blueprint, $thread->getServiceName());
-        $platform = $this->loadPlatform($thread->getServiceName());
-
-
-        if ($thread->getServiceId() !== null) {
-            if (!$thread->isReady()) {
-                $platform->refreshThread($thread);
-                $store = true;
-            }
-        } else {
-            $platform->startThread(
-                $assistant,
-                $thread,
-                $blueprint->generateAdditionalInstructions($subject)
-            );
-            $store = true;
-        }
-
-        if ($store) {
-            $repository->storeThread($thread);
-        }
-
-        return $thread;
+        return $this->loadPlatform(
+            $options->platform ?? $this->defaultPlatform ?? throw Exceptional::Runtime(
+                message: 'No Prophet platform was configured'
+            )
+        )->respond($blueprint, $subject, $options);
     }
-
-    public function refreshThread(
-        Thread $thread
-    ): void {
-        if ($thread->getServiceId() === null) {
-            throw Exceptional::Runtime(
-                message: 'Cannot refresh thread that has not completed initialization'
-            );
-        }
-
-        $platform = $this->loadPlatform($thread->getServiceName());
-        $platform->refreshThread($thread);
-
-        $this->getRepository()->storeThread($thread);
-    }
-
-
 
     /**
-     * @template TSubject of Subject
-     * @param string|Blueprint<TSubject> $blueprint
-     * @param TSubject $subject
-     * @return Thread
+     * @param string|Blueprint<Subject> $blueprint
      */
-    public function loadAndPollThread(
+    public function respondText(
         string|Blueprint $blueprint,
-        Subject $subject
-    ): Thread {
-        $thread = $this->loadThread($blueprint, $subject);
-        return $this->pollThread($thread);
-    }
+        Subject $subject,
+        ?GenerationOptions $options = null
+    ): string {
+        $result = $this->respond($blueprint, $subject, $options);
 
-    public function pollThread(
-        Thread $thread,
-        int $attempts = 5
-    ): Thread {
-        $count = 0;
-
-        do {
-            if ($thread->isReady()) {
-                break;
-            }
-
-            sleep(3);
-            $this->refreshThread($thread);
-            continue;
-        } while ($count++ < $attempts);
-
-        if (!$thread->isReady()) {
+        if ($result->text === null) {
             throw Exceptional::Runtime(
-                message: 'Unable to get a response'
+                message: 'Prophet platform did not return text output'
             );
         }
 
-        return $thread;
+        return $result->text;
     }
-
-
 
     /**
-     * @template TSubject of Subject
-     * @param string|Blueprint<TSubject> $blueprint
-     * @param TSubject $subject
-     */
-    public function loadAndDeleteThread(
-        string|Blueprint $blueprint,
-        Subject $subject
-    ): bool {
-        $thread = $this->loadOrCreateThread(
-            blueprint: $blueprint,
-            subject: $subject,
-            create: false
-        );
-
-        if (!$thread) {
-            return false;
-        }
-
-        return $this->deleteThread($thread);
-    }
-
-    public function deleteThread(
-        Thread $thread
-    ): bool {
-        if ($thread->getServiceId() !== null) {
-            $platform = $this->loadPlatform($thread->getServiceName());
-            $platform->deleteThread($thread);
-        }
-
-        $repository = $this->getRepository();
-        return $repository->deleteThread($thread);
-    }
-
-
-    /**
+     * @param string|Blueprint<Subject> $blueprint
      * @return array<string,mixed>
      */
-    public function serializeThreadWithMessages(
-        Thread $thread,
-        int $limit = 20,
-        ?string $afterId = null
+    public function respondJson(
+        string|Blueprint $blueprint,
+        Subject $subject,
+        ?GenerationOptions $options = null
     ): array {
-        $output = array_merge(
-            Coercion::asArray($thread->jsonSerialize()),
-            $this->fetchMessages($thread, $limit, $afterId)->jsonSerialize()
-        );
+        $result = $this->respond($blueprint, $subject, $options);
 
-        /** @var array<string,mixed> */
-        return $output;
-    }
-
-    public function fetchMessages(
-        Thread $thread,
-        int $limit = 20,
-        ?string $afterId = null
-    ): MessageList {
-        if ($thread->getServiceId() === null) {
-            return new MessageList();
-        }
-
-        $platform = $this->loadPlatform($thread->getServiceName());
-        return $platform->fetchMessages($thread, $limit, $afterId);
-    }
-
-
-    public function reply(
-        Thread $thread,
-        string $message
-    ): Message {
-        if ($thread->getServiceId() === null) {
+        if ($result->json === null) {
             throw Exceptional::Runtime(
-                message: 'Cannot reply to thread that has not completed initialization'
+                message: 'Prophet platform did not return JSON output'
             );
         }
 
-        $assistant = $this->loadAssistant($thread->getAction(), $thread->getServiceName());
-        $platform = $this->loadPlatform($thread->getServiceName());
-        $output = $platform->reply($assistant, $thread, $message);
-
-        $repository = $this->getRepository();
-        $repository->storeThread($thread);
-
-        return $output;
+        return $result->json;
     }
 }

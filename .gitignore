@@ -7,3 +7,6 @@ Thumbs.db
 /phpunit.xml
 /.idea
 /.env
+/.phpunit.cache
+
+.effigy

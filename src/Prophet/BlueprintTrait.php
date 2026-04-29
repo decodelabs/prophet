@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace DecodeLabs\Prophet;
 
 use DecodeLabs\Dictum;
-use DecodeLabs\Prophet\Service\LanguageModelLevel;
 use DecodeLabs\Prophet\Service\Medium;
 use ReflectionClass;
 
@@ -35,29 +34,14 @@ trait BlueprintTrait
         return Medium::Text;
     }
 
-    public function getLanguageModelLevel(): LanguageModelLevel
+    public function getDefaultModel(): ?string
     {
-        return LanguageModelLevel::Standard;
+        return null;
     }
 
-    public function getFeatures(): array
-    {
-        return [];
-    }
-
-    public function getFiles(): array
-    {
-        return [];
-    }
-
-    public function getFunctions(): array
-    {
-        return [];
-    }
-
-    public function generateAdditionalInstructions(
+    public function generateInput(
         Subject $target
-    ): ?string {
+    ): string|array|null {
         return null;
     }
 }

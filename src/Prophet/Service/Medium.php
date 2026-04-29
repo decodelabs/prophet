@@ -12,10 +12,5 @@ namespace DecodeLabs\Prophet\Service;
 enum Medium: string
 {
     case Text = 'text';
-    case Code = 'code';
     case Json = 'json';
-    case Image = 'image';
-    case Speech = 'speech';
-    case Video = 'video';
-    case Audio = 'audio';
 }

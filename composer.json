@@ -1,6 +1,6 @@
 {
     "name": "decodelabs/prophet",
-    "description": "Generalised interfaces for creating AI assistants",
+    "description": "Stateless AI response orchestration",
     "type": "library",
     "keywords": [ ],
     "license": "MIT",
@@ -13,20 +13,15 @@
     "require": {
         "php": "^8.4",
 
-        "decodelabs/archetype": "^0.4",
-        "decodelabs/atlas": "^0.14",
-        "decodelabs/coercion": "^0.3.3",
         "decodelabs/dictum": "^0.7",
         "decodelabs/exceptional": "^0.6.1",
         "decodelabs/kingdom": "^0.2",
-        "decodelabs/monarch": "^0.2",
-        "decodelabs/slingshot": "^0.3",
-
-        "nesbot/carbon": "^3"
+        "decodelabs/slingshot": "^0.3"
     },
     "require-dev": {
         "decodelabs/chorus": ">0",
-        "decodelabs/phpstan-decodelabs": "^0.7"
+        "decodelabs/phpstan-decodelabs": "^0.7",
+        "phpunit/phpunit": "^11.5"
     },
     "autoload": {
         "psr-4": {
@@ -36,9 +31,14 @@
             "src/Prophet.php"
         ]
     },
+    "autoload-dev": {
+        "psr-4": {
+            "DecodeLabs\\Prophet\\Tests\\": "tests/"
+        }
+    },
     "extra": {
         "branch-alias": {
-            "dev-develop": "0.5.x-dev"
+            "dev-develop": "0.6.x-dev"
         }
     },
     "config": {
