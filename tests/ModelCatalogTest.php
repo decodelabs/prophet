@@ -16,15 +16,15 @@ class ModelCatalogTest extends TestCase
         self::assertSame(
             [
                 'OpenAI' => [
-                    'gpt-5.4-mini' => 'GPT 5.4 mini',
                     'gpt-5.4' => 'GPT 5.4',
+                    'gpt-5.4-mini' => 'GPT 5.4 mini',
                     'gpt-4o' => 'GPT 4o'
                 ],
                 'OpenRouter' => [
-                    'anthropic/claude-haiku-4.5' => 'Claude Haiku 4.5',
-                    'anthropic/claude-sonnet-4.6' => 'Claude Sonnet 4.6',
                     'anthropic/claude-opus-4.7' => 'Claude Opus 4.7',
-                    'moonshotai/kimi-k2.6' => 'Kimi K2.6'
+                    'anthropic/claude-sonnet-4.6' => 'Claude Sonnet 4.6',
+                    'moonshotai/kimi-k2.6' => 'Kimi K2.6',
+                    'anthropic/claude-haiku-4.5' => 'Claude Haiku 4.5'
                 ]
             ],
             $catalog->toGroupedOptions()
@@ -59,8 +59,8 @@ class ModelCatalogTest extends TestCase
         self::assertSame(
             [
                 'OpenAI' => [
-                    'OpenAi:gpt-5.4-mini' => 'GPT 5.4 mini',
                     'OpenAi:gpt-5.4' => 'GPT 5.4',
+                    'OpenAi:gpt-5.4-mini' => 'GPT 5.4 mini',
                     'OpenAi:gpt-4o' => 'GPT 4o'
                 ]
             ],
@@ -104,15 +104,17 @@ class ModelCatalogTest extends TestCase
     {
         $catalog = (new ModelCatalog())
             ->setPlatformLabel('OpenAi', 'OpenAI')
-            ->add('OpenAi', 'gpt-4o', 'GPT 4o')
+            ->add('OpenAi', 'gpt-4o', 'GPT 4o', 10)
+            ->add('OpenAi', 'gpt-5.5', 'GPT 5.5', 100)
             ->setPlatformLabel('OpenRouter', 'OpenRouter')
             ->add('OpenRouter', 'anthropic/claude-sonnet-4.6', 'Claude Sonnet 4.6');
 
         self::assertFalse($catalog->isEmpty());
-        self::assertCount(2, $catalog->getEntries());
+        self::assertCount(3, $catalog->getEntries());
         self::assertSame(
             [
                 'OpenAI' => [
+                    'gpt-5.5' => 'GPT 5.5',
                     'gpt-4o' => 'GPT 4o'
                 ],
                 'OpenRouter' => [

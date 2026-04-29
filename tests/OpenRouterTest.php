@@ -111,6 +111,8 @@ class OpenRouterTest extends TestCase
 
         self::assertSame(['answer' => 'ok'], $result->json);
         self::assertSame(['type' => 'json_object'], $this->requirePayload($platform)['response_format']);
+        $messages = $this->requireMessages($this->requirePayload($platform));
+        self::assertStringContainsString('JSON', $messages[1]['content']);
     }
 
     public function testStructuredInputIsEncodedBeforeSending(): void
@@ -155,6 +157,29 @@ class OpenRouterTest extends TestCase
         $this->expectExceptionMessage('OpenRouter response was not valid JSON');
 
         $platform->respond(new TestJsonBlueprint(), new Generic('demo', 'subject-1'), new GenerationOptions());
+    }
+
+    public function testFencedJsonResponseIsUnwrapped(): void
+    {
+        $platform = new TestOpenRouter('test-key');
+        $platform->nextResponse = [
+            'id' => 'chatcmpl-json',
+            'choices' => [
+                [
+                    'message' => [
+                        'content' => "```json\n{\"answer\":\"ok\"}\n```"
+                    ]
+                ]
+            ]
+        ];
+
+        $result = $platform->respond(
+            new TestJsonBlueprint(),
+            new Generic('demo', 'subject-1'),
+            new GenerationOptions()
+        );
+
+        self::assertSame(['answer' => 'ok'], $result->json);
     }
 
     /**

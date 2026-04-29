@@ -14,7 +14,8 @@ final class ModelCatalogEntry implements \JsonSerializable
     public function __construct(
         public readonly string $platformName,
         public readonly string $model,
-        public readonly string $label
+        public readonly string $label,
+        public readonly int $weight = 0
     ) {
     }
 
@@ -22,7 +23,8 @@ final class ModelCatalogEntry implements \JsonSerializable
      * @return array{
      *     platformName: string,
      *     model: string,
-     *     label: string
+     *     label: string,
+     *     weight: int
      * }
      */
     public function jsonSerialize(): array
@@ -30,7 +32,8 @@ final class ModelCatalogEntry implements \JsonSerializable
         return [
             'platformName' => $this->platformName,
             'model' => $this->model,
-            'label' => $this->label
+            'label' => $this->label,
+            'weight' => $this->weight
         ];
     }
 }

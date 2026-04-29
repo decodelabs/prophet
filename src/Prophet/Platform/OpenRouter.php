@@ -165,6 +165,7 @@ class OpenRouter implements Platform
         Subject $subject,
         GenerationOptions $options
     ): array {
+        $medium = $blueprint->getMedium();
         $messages = [];
         $instructions = trim($blueprint->getInstructions());
 
@@ -180,12 +181,17 @@ class OpenRouter implements Platform
         if ($input !== null) {
             $messages[] = [
                 'role' => 'user',
-                'content' => $this->normalizeInput($input)
+                'content' => $this->normalizeInput($input, $medium)
+            ];
+        } elseif ($medium === Medium::Json) {
+            $messages[] = [
+                'role' => 'user',
+                'content' => 'Return JSON.'
             ];
         }
 
         $output = [
-            'model' => $options->model ?? $blueprint->getDefaultModel() ?? $this->getDefaultModel($blueprint->getMedium()),
+            'model' => $options->model ?? $blueprint->getDefaultModel() ?? $this->getDefaultModel($medium),
             'messages' => $messages
         ];
 
@@ -197,7 +203,7 @@ class OpenRouter implements Platform
             $output['max_tokens'] = $options->maxOutputTokens;
         }
 
-        if ($blueprint->getMedium() === Medium::Json) {
+        if ($medium === Medium::Json) {
             $output['response_format'] = [
                 'type' => 'json_object'
             ];
@@ -210,13 +216,35 @@ class OpenRouter implements Platform
      * @param string|array<string,mixed> $input
      */
     protected function normalizeInput(
-        string|array $input
+        string|array $input,
+        Medium $medium
     ): string {
+        if ($medium === Medium::Json) {
+            return $this->normalizeJsonInput($input);
+        }
+
         if (is_string($input)) {
             return $input;
         }
 
         return json_encode($input, JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * @param string|array<string,mixed> $input
+     */
+    protected function normalizeJsonInput(
+        string|array $input
+    ): string {
+        if (is_array($input)) {
+            $input = json_encode($input, JSON_THROW_ON_ERROR);
+        }
+
+        if (stripos($input, 'json') !== false) {
+            return $input;
+        }
+
+        return "Return JSON.\n\n" . $input;
     }
 
     /**
@@ -293,7 +321,7 @@ class OpenRouter implements Platform
     protected function decodeJsonOutput(
         string $text
     ): array {
-        $output = json_decode($text, true);
+        $output = json_decode($this->normalizeJsonOutput($text), true);
 
         if (!is_array($output)) {
             throw Exceptional::Runtime(
@@ -303,6 +331,22 @@ class OpenRouter implements Platform
 
         /** @var array<string,mixed> $output */
         return $output;
+    }
+
+    protected function normalizeJsonOutput(
+        string $text
+    ): string {
+        $text = trim($text);
+
+        if (
+            str_starts_with($text, '```') &&
+            preg_match('/^```(?:json)?\s*(.*?)\s*```$/is', $text, $matches) === 1 &&
+            is_string($matches[1] ?? null)
+        ) {
+            return trim($matches[1]);
+        }
+
+        return $text;
     }
 
     /**

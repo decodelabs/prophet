@@ -46,13 +46,13 @@ final class ModelCatalog implements JsonSerializable, Service
         return (new self())
             ->setPlatformLabel('OpenAi', 'OpenAI')
             ->setPlatformLabel('OpenRouter', 'OpenRouter')
-            ->add('OpenAi', 'gpt-5.4', 'GPT 5.4')
-            ->add('OpenAi', 'gpt-5.4-mini', 'GPT 5.4 mini')
-            ->add('OpenAi', 'gpt-4o', 'GPT 4o')
-            ->add('OpenRouter', 'anthropic/claude-opus-4.7', 'Claude Opus 4.7')
-            ->add('OpenRouter', 'anthropic/claude-sonnet-4.6', 'Claude Sonnet 4.6')
-            ->add('OpenRouter', 'anthropic/claude-haiku-4.5', 'Claude Haiku 4.5')
-            ->add('OpenRouter', 'moonshotai/kimi-k2.6', 'Kimi K2.6');
+            ->add('OpenAi', 'gpt-5.4', 'GPT 5.4', 80)
+            ->add('OpenAi', 'gpt-5.4-mini', 'GPT 5.4 mini', 70)
+            ->add('OpenAi', 'gpt-4o', 'GPT 4o', 60)
+            ->add('OpenRouter', 'anthropic/claude-opus-4.7', 'Claude Opus 4.7', 100)
+            ->add('OpenRouter', 'anthropic/claude-sonnet-4.6', 'Claude Sonnet 4.6', 90)
+            ->add('OpenRouter', 'anthropic/claude-haiku-4.5', 'Claude Haiku 4.5', 70)
+            ->add('OpenRouter', 'moonshotai/kimi-k2.6', 'Kimi K2.6', 40);
     }
 
     public function setPlatformLabel(
@@ -66,12 +66,14 @@ final class ModelCatalog implements JsonSerializable, Service
     public function add(
         string $platformName,
         string $model,
-        ?string $label = null
+        ?string $label = null,
+        int $weight = 0
     ): self {
         $this->entries[] = new ModelCatalogEntry(
             platformName: $platformName,
             model: $model,
-            label: $label ?? $model
+            label: $label ?? $model,
+            weight: $weight
         );
 
         if (!isset($this->platformLabels[$platformName])) {
@@ -108,7 +110,8 @@ final class ModelCatalog implements JsonSerializable, Service
             $output->add(
                 platformName: $entry->platformName,
                 model: $entry->model,
-                label: $entry->label
+                label: $entry->label,
+                weight: $entry->weight
             );
         }
 
@@ -216,11 +219,15 @@ final class ModelCatalog implements JsonSerializable, Service
     public function toGroupedOptions(): array
     {
         $output = [];
+        $groupEntries = $this->getSortedEntriesByPlatform();
 
-        foreach ($this->entries as $entry) {
-            $platformLabel = $this->platformLabels[$entry->platformName] ?? $entry->platformName;
-            $output[$platformLabel] ??= [];
-            $output[$platformLabel][$entry->model] = $entry->label;
+        foreach ($groupEntries as $platformName => $entries) {
+            $platformLabel = $this->platformLabels[$platformName] ?? $platformName;
+            $output[$platformLabel] = [];
+
+            foreach ($entries as $entry) {
+                $output[$platformLabel][$entry->model] = $entry->label;
+            }
         }
 
         return $output;
@@ -232,11 +239,40 @@ final class ModelCatalog implements JsonSerializable, Service
     public function toGroupedValueOptions(): array
     {
         $output = [];
+        $groupEntries = $this->getSortedEntriesByPlatform();
+
+        foreach ($groupEntries as $platformName => $entries) {
+            $platformLabel = $this->platformLabels[$platformName] ?? $platformName;
+            $output[$platformLabel] = [];
+
+            foreach ($entries as $entry) {
+                $output[$platformLabel][$this->createValue($entry->platformName, $entry->model)] = $entry->label;
+            }
+        }
+
+        return $output;
+    }
+
+    /**
+     * @return array<string,list<ModelCatalogEntry>>
+     */
+    protected function getSortedEntriesByPlatform(): array
+    {
+        $output = [];
 
         foreach ($this->entries as $entry) {
-            $platformLabel = $this->platformLabels[$entry->platformName] ?? $entry->platformName;
-            $output[$platformLabel] ??= [];
-            $output[$platformLabel][$this->createValue($entry->platformName, $entry->model)] = $entry->label;
+            $output[$entry->platformName] ??= [];
+            $output[$entry->platformName][] = $entry;
+        }
+
+        foreach ($output as &$entries) {
+            usort($entries, function (ModelCatalogEntry $a, ModelCatalogEntry $b): int {
+                if ($a->weight !== $b->weight) {
+                    return $b->weight <=> $a->weight;
+                }
+
+                return $a->label <=> $b->label;
+            });
         }
 
         return $output;
