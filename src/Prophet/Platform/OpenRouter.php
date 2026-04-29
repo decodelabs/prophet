@@ -341,6 +341,7 @@ class OpenRouter implements Platform
         if (
             str_starts_with($text, '```') &&
             preg_match('/^```(?:json)?\s*(.*?)\s*```$/is', $text, $matches) === 1 &&
+            // @phpstan-ignore-next-line
             is_string($matches[1] ?? null)
         ) {
             return trim($matches[1]);
