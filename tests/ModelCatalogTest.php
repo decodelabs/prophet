@@ -21,8 +21,9 @@ class ModelCatalogTest extends TestCase
                     'gpt-4o' => 'GPT 4o'
                 ],
                 'OpenRouter' => [
-                    'anthropic/claude-haiku-4.6' => 'Claude Haiku 4.6',
+                    'anthropic/claude-haiku-4.5' => 'Claude Haiku 4.5',
                     'anthropic/claude-sonnet-4.6' => 'Claude Sonnet 4.6',
+                    'anthropic/claude-opus-4.7' => 'Claude Opus 4.7',
                     'moonshotai/kimi-k2.6' => 'Kimi K2.6'
                 ]
             ],

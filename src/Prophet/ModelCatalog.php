@@ -46,11 +46,12 @@ final class ModelCatalog implements JsonSerializable, Service
         return (new self())
             ->setPlatformLabel('OpenAi', 'OpenAI')
             ->setPlatformLabel('OpenRouter', 'OpenRouter')
-            ->add('OpenAi', 'gpt-5.4-mini', 'GPT 5.4 mini')
             ->add('OpenAi', 'gpt-5.4', 'GPT 5.4')
+            ->add('OpenAi', 'gpt-5.4-mini', 'GPT 5.4 mini')
             ->add('OpenAi', 'gpt-4o', 'GPT 4o')
-            ->add('OpenRouter', 'anthropic/claude-haiku-4.6', 'Claude Haiku 4.6')
+            ->add('OpenRouter', 'anthropic/claude-opus-4.7', 'Claude Opus 4.7')
             ->add('OpenRouter', 'anthropic/claude-sonnet-4.6', 'Claude Sonnet 4.6')
+            ->add('OpenRouter', 'anthropic/claude-haiku-4.5', 'Claude Haiku 4.5')
             ->add('OpenRouter', 'moonshotai/kimi-k2.6', 'Kimi K2.6');
     }
 

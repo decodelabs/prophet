@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Unreleased
---
+- Updated common model catalog
 
 ---
 
@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rebuilt the core OpenRouter adapter around immediate request execution
 - Reduced mediums to `text` and `json`
 - Added grouped model catalog helpers for provider-aware UI dropdowns
+- Added Claude Opus 4.7 to the shared OpenRouter common catalog
 - Improved doc comment headers
 - Added AGENTS.md
 - Integrated Chorus dev dependency
