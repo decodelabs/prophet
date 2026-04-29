@@ -10,3 +10,4 @@ Thumbs.db
 /.phpunit.cache
 
 .effigy
+effigy.json
