@@ -5,8 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Unreleased
+--
+
+---
+
+### [v0.6.2](https://github.com/decodelabs/prophet/commits/v0.6.2) - 29th April 2026
+
 - Added weighting to ModelCatalog
 - Fixed OpenRouter JSON output
+
+[Full list of changes](https://github.com/decodelabs/prophet/compare/v0.6.1...v0.6.2)
 
 ---
 
